@@ -83,7 +83,7 @@ body {
 }
 
 /* ==========================================
-   PLOVOUCÍ SPODNÍ NAVIGACE (Dokonalý záliv)
+   PLOVOUCÍ SPODNÍ NAVIGACE (SVG KŘIVKA)
    ========================================== */
 .mobile-nav {
   position: fixed;
@@ -94,47 +94,60 @@ body {
   max-width: 420px;
   height: 70px;
   z-index: 1000;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.3));
+}
+
+/* SVG Pozadí se zaoblenou křivkou */
+.nav-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.nav-bg path {
+  transition: d 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-container {
   position: relative;
   width: 100%;
   height: 100%;
-  background: #ffffff;
-  border-radius: 35px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   align-items: center;
-  overflow: visible;
+  z-index: 2;
 }
 
-/* Plovoucí indikátor – posunutý tak, aby jeho střed ležel přesně na horním okraji lišty */
+/* Plovoucí indikátor */
 .nav-indicator {
   position: absolute;
-  top: -28px; /* Polovina výšky 56px koule, tzn. střed je přesně na hraně 0px */
+  top: -28px;
   left: 0;
   width: 20%;
-  height: 60px;
+  height: 56px;
   display: flex;
   justify-content: center;
   align-items: center;
   pointer-events: none;
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1001;
+  z-index: 10; /* Černý kruh zůstává v pozadí výřezu */
 }
 
-/* Aktivní koule se stínem a okrajem v barvě pozadí pro hluboký výřez */
+/* Plovoucí aktivní kruh */
 .nav-indicator .active-circle {
   width: 56px;
   height: 56px;
-  background: #1a202c;
+  background: #121824;
   border-radius: 50%;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18), 
-              0 0 0 6px #121824; /* Okraj v barvě pozadí aplikace */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 20; /* Ikona uvnitř kruhu se posune dopředu nad černý podklad */
 }
 
 /* Tlačítka */
@@ -153,7 +166,7 @@ body {
   cursor: pointer;
   width: 100%;
   height: 100%;
-  z-index: 1002;
+  z-index: 4;
   transition: all 0.3s ease;
   position: relative;
 }
@@ -172,15 +185,15 @@ body {
   transition: color 0.3s ease;
 }
 
-/* Aktivní stav – ikona vyjede přesně do středu koule a zbělá */
+/* Aktivní tlačítko */
 .nav-item.active {
   color: #0f172a;
   font-weight: 700;
 }
 
 .nav-item.active .nav-icon {
-  filter: brightness(0) invert(1); /* Zářivě bílá ikona */
-  transform: translateY(-28px); /* Vyjede přesně do vycentrované koule */
+  filter: brightness(0) invert(1);
+  transform: translateY(-28px);
 }
 
 .nav-item.active .label {

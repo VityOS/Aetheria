@@ -16,7 +16,6 @@
   <!-- Hlavní obsahový prostor -->
   <main id="app-content" class="content-container">
     
-    <!-- Sekce: Čtení (Výchozí) -->
     <section id="cteni" class="tab-content active">
       <h2>Příběh & Čtení</h2>
       <div class="card">
@@ -25,7 +24,6 @@
       </div>
     </section>
 
-    <!-- Sekce: Mapa -->
     <section id="mapa" class="tab-content">
       <h2>Mapa Světa</h2>
       <div class="card map-placeholder">
@@ -33,19 +31,16 @@
       </div>
     </section>
 
-    <!-- Sekce: Lokality -->
     <section id="lokality" class="tab-content">
       <h2>Města a Lokality</h2>
       <div id="cities-list" class="items-grid"></div>
     </section>
 
-    <!-- Sekce: Postavy -->
     <section id="postavy" class="tab-content">
       <h2>Postavy</h2>
       <div id="characters-list" class="items-grid"></div>
     </section>
 
-    <!-- Sekce: Bestiář -->
     <section id="bestiar" class="tab-content">
       <h2>Bestiář</h2>
       <div id="bestiary-list" class="items-grid"></div>
@@ -53,15 +48,19 @@
 
   </main>
 
-  <!-- Mobilní spodní lišta -->
+  <!-- Mobilní spodní lišta s přesnou SVG křivkou -->
   <nav class="mobile-nav">
-    <!-- Plovoucí bílý kruh -->
+    <!-- SVG Pozadí tvořící bílou lištu s červenými a modrými oblouky -->
+    <svg class="nav-bg" viewBox="0 0 380 70">
+      <path id="curve-path" fill="#ffffff" d="" />
+    </svg>
+
+    <!-- Plovoucí indikátor -->
     <div class="nav-indicator" id="nav-indicator">
       <div class="active-circle"></div>
     </div>
 
     <div class="nav-container">
-      <!-- 5 Tlačítek navigační lišty -->
       <button class="nav-item" onclick="switchTab('mapa', this)">
         <img src="icons/adventure.png" alt="Mapa" class="nav-icon">
         <span class="label">Mapa</span>
