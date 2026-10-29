@@ -9,7 +9,7 @@
 body {
   background-color: #f4f6f8;
   color: #2d3748;
-  padding-bottom: 110px; /* Dostatek místa dole, aby text nezajížděl pod lištu */
+  padding-bottom: 110px;
   margin: 0;
 }
 
@@ -77,7 +77,7 @@ body {
 }
 
 /* ==========================================
-   MOBILNÍ SPODNÍ NAVIGACE (Plovoucí panel)
+   PLOVOUCÍ SPODNÍ NAVIGACE
    ========================================== */
 .mobile-nav {
   position: fixed;
@@ -87,9 +87,9 @@ body {
   width: calc(100% - 32px);
   max-width: 420px;
   background: #ffffff;
-  border-radius: 28px;
+  border-radius: 32px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-  padding: 8px 12px;
+  padding: 10px 16px;
   z-index: 1000;
 }
 
@@ -101,7 +101,7 @@ body {
   width: 100%;
 }
 
-/* Jednotlivá tlačítka na liště */
+/* Jednotlivá postranní tlačítka (výchozí stav: šedivá) */
 .nav-item {
   background: none;
   border: none;
@@ -109,57 +109,74 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  color: #a0aec0;
+  gap: 4px;
+  color: #b0bec5; /* Šedý text */
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  padding: 6px;
+  padding: 4px;
   transition: all 0.2s ease;
   flex: 1;
 }
 
-.nav-item .icon {
-  font-size: 22px;
-  line-height: 1;
+/* Postranní ikony – ve výchozím stavu hezky šedivé pomocí filtru */
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  /* Převádí černou na přesnou světlou šedou barvu (#b0bec5) */
+  filter: brightness(0) saturate(100%) invert(77%) sepia(8%) saturate(579%) hue-rotate(170deg) brightness(92%) contrast(88%);
+  transition: filter 0.2s ease;
 }
 
 .nav-item .label {
   display: block;
 }
 
+/* Aktivní postranní tlačítko – ikona zčerná (filtr se zruší, zůstane původní černá PNG) a text zčerná */
 .nav-item.active {
-  color: #3182ce;
+  color: #1a202c;
+  font-weight: 700;
 }
 
-/* Prostřední vystouplé tlačítko (Čtení) */
+.nav-item.active .nav-icon {
+  filter: none; /* Vrátí původní černou barvu z PNG */
+}
+
+/* Prostřední vystouplé tlačítko */
 .center-button-wrapper {
   position: relative;
-  top: -24px;
-  background: #f4f6f8; /* Vytváří „vykrojení“ pozadí pod tlačítkem */
+  top: -28px;
+  background: #f4f6f8;
   padding: 6px;
   border-radius: 50%;
-  margin: 0 4px;
+  margin: 0 6px;
+  box-shadow: 0 -6px 15px rgba(0, 0, 0, 0.03);
 }
 
 .center-btn {
   background: #1a202c !important;
-  width: 56px;
-  height: 56px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  cursor: pointer;
+  border: none;
 }
 
-.center-btn .icon {
-  font-size: 26px;
-  color: #ffffff;
+/* Středová ikona – trvale bílá, na proklik nereaguje */
+.center-icon {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: brightness(0) invert(1); /* Trvale bílá */
 }
 
-/* Skrytí mobilní lišty na PC (zatím) */
+/* Skrytí mobilní lišty na PC */
 @media (min-width: 769px) {
   .mobile-nav {
     display: none;

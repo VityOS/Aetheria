@@ -53,36 +53,38 @@
 
   </main>
 
-  <!-- Spodní mobilní navigace podle vašeho designu -->
+  <!-- Spodní mobilní navigace -->
   <nav class="mobile-nav">
     <div class="nav-container">
       
-      <!-- Vlevo -->
+      <!-- 1. Mapa -->
       <button class="nav-item" onclick="switchTab('mapa', this)">
-        <span class="icon">🗺️</span>
+        <img src="icons/adventure.png" alt="Mapa" class="nav-icon">
         <span class="label">Mapa</span>
       </button>
       
+      <!-- 2. Lokality -->
       <button class="nav-item" onclick="switchTab('lokality', this)">
-        <span class="icon">🏰</span>
+        <img src="icons/castle.png" alt="Lokality" class="nav-icon">
         <span class="label">Lokality</span>
       </button>
 
-      <!-- Uprostřed: Hlavní tlačítko Čtení -->
+      <!-- Uprostřed: Vystouplé tlačítko Čtení (Aktivní) -->
       <div class="center-button-wrapper">
         <button class="nav-item center-btn active" onclick="switchTab('cteni', this)">
-          <span class="icon">📖</span>
+          <img src="icons/open-book.png" alt="Čtení" class="center-icon">
         </button>
       </div>
 
-      <!-- Vpravo -->
+      <!-- 3. Postavy -->
       <button class="nav-item" onclick="switchTab('postavy', this)">
-        <span class="icon">🧙‍♂️</span>
+        <img src="icons/wizard.png" alt="Postavy" class="nav-icon">
         <span class="label">Postavy</span>
       </button>
 
+      <!-- 4. Bestiář -->
       <button class="nav-item" onclick="switchTab('bestiar', this)">
-        <span class="icon">🐉</span>
+        <img src="icons/dragon.png" alt="Bestiář" class="nav-icon">
         <span class="label">Bestiář</span>
       </button>
 
