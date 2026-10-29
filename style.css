@@ -9,7 +9,8 @@
 body {
   background-color: #f4f6f8;
   color: #2d3748;
-  padding-bottom: 100px; /* Prostor pro spodní navigační lištu */
+  padding-bottom: 110px; /* Dostatek místa dole, aby text nezajížděl pod lištu */
+  margin: 0;
 }
 
 /* Horní lišta */
@@ -72,30 +73,35 @@ body {
   justify-content: center;
   background: #e2e8f0;
   border: 2px dashed #cbd5e0;
+  border-radius: 16px;
 }
 
-/* Mobilní spodní lišta podle předlohy */
+/* ==========================================
+   MOBILNÍ SPODNÍ NAVIGACE (Plovoucí panel)
+   ========================================== */
 .mobile-nav {
   position: fixed;
-  bottom: 15px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 30px);
+  width: calc(100% - 32px);
   max-width: 420px;
   background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   padding: 8px 12px;
   z-index: 1000;
 }
 
 .nav-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   position: relative;
+  width: 100%;
 }
 
+/* Jednotlivá tlačítka na liště */
 .nav-item {
   background: none;
   border: none;
@@ -114,7 +120,12 @@ body {
 }
 
 .nav-item .icon {
-  font-size: 20px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.nav-item .label {
+  display: block;
 }
 
 .nav-item.active {
@@ -124,10 +135,11 @@ body {
 /* Prostřední vystouplé tlačítko (Čtení) */
 .center-button-wrapper {
   position: relative;
-  top: -20px;
-  background: #f4f6f8;
+  top: -24px;
+  background: #f4f6f8; /* Vytváří „vykrojení“ pozadí pod tlačítkem */
   padding: 6px;
   border-radius: 50%;
+  margin: 0 4px;
 }
 
 .center-btn {
@@ -139,16 +151,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
 }
 
 .center-btn .icon {
-  font-size: 24px;
+  font-size: 26px;
+  color: #ffffff;
 }
 
-/* Příprava pro PC verzi */
+/* Skrytí mobilní lišty na PC (zatím) */
 @media (min-width: 769px) {
   .mobile-nav {
-    display: none; /* Zatím skryjeme na PC, doděláme později */
+    display: none;
   }
   .content-container {
     max-width: 900px;
