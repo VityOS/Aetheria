@@ -53,41 +53,39 @@
 
   </main>
 
-  <!-- Spodní mobilní navigace -->
+  <!-- Mobilní spodní lišta -->
   <nav class="mobile-nav">
+    <!-- Plovoucí bílý kruh -->
+    <div class="nav-indicator" id="nav-indicator">
+      <div class="active-circle"></div>
+    </div>
+
     <div class="nav-container">
-      
-      <!-- 1. Mapa -->
+      <!-- 5 Tlačítek navigační lišty -->
       <button class="nav-item" onclick="switchTab('mapa', this)">
         <img src="icons/adventure.png" alt="Mapa" class="nav-icon">
         <span class="label">Mapa</span>
       </button>
-      
-      <!-- 2. Lokality -->
+
       <button class="nav-item" onclick="switchTab('lokality', this)">
         <img src="icons/castle.png" alt="Lokality" class="nav-icon">
         <span class="label">Lokality</span>
       </button>
 
-      <!-- Uprostřed: Vystouplé tlačítko Čtení (Aktivní) -->
-      <div class="center-button-wrapper">
-        <button class="nav-item center-btn active" onclick="switchTab('cteni', this)">
-          <img src="icons/open-book.png" alt="Čtení" class="center-icon">
-        </button>
-      </div>
+      <button class="nav-item active" onclick="switchTab('cteni', this)">
+        <img src="icons/open-book.png" alt="Čtení" class="nav-icon">
+        <span class="label">Čtení</span>
+      </button>
 
-      <!-- 3. Postavy -->
       <button class="nav-item" onclick="switchTab('postavy', this)">
         <img src="icons/wizard.png" alt="Postavy" class="nav-icon">
         <span class="label">Postavy</span>
       </button>
 
-      <!-- 4. Bestiář -->
       <button class="nav-item" onclick="switchTab('bestiar', this)">
         <img src="icons/dragon.png" alt="Bestiář" class="nav-icon">
         <span class="label">Bestiář</span>
       </button>
-
     </div>
   </nav>
 

@@ -7,8 +7,8 @@
 }
 
 body {
-  background-color: #f4f6f8;
-  color: #2d3748;
+  background-color: #121824;
+  color: #e2e8f0;
   padding-bottom: 110px;
   margin: 0;
 }
@@ -22,7 +22,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 .app-header h1 {
@@ -48,16 +48,22 @@ body {
 .tab-content h2 {
   font-size: 22px;
   margin-bottom: 16px;
-  color: #1a202c;
+  color: #ffffff;
 }
 
 /* Karty */
 .card {
-  background: #ffffff;
+  background: #1e293b;
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  color: #cbd5e1;
+}
+
+.card h3 {
+  color: #ffffff;
+  margin-bottom: 6px;
 }
 
 .items-grid {
@@ -71,13 +77,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e2e8f0;
-  border: 2px dashed #cbd5e0;
+  background: #1e293b;
+  border: 2px dashed #475569;
   border-radius: 16px;
 }
 
 /* ==========================================
-   PLOVOUCÍ SPODNÍ NAVIGACE
+   PLOVOUCÍ SPODNÍ NAVIGACE (Dokonalý záliv)
    ========================================== */
 .mobile-nav {
   position: fixed;
@@ -86,22 +92,52 @@ body {
   transform: translateX(-50%);
   width: calc(100% - 32px);
   max-width: 420px;
-  background: #ffffff;
-  border-radius: 32px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-  padding: 10px 16px;
+  height: 70px;
   z-index: 1000;
 }
 
 .nav-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   position: relative;
   width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 35px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  overflow: visible;
 }
 
-/* Jednotlivá postranní tlačítka (výchozí stav: šedivá) */
+/* Plovoucí indikátor – posunutý tak, aby jeho střed ležel přesně na horním okraji lišty */
+.nav-indicator {
+  position: absolute;
+  top: -28px; /* Polovina výšky 56px koule, tzn. střed je přesně na hraně 0px */
+  left: 0;
+  width: 20%;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1001;
+}
+
+/* Aktivní koule se stínem a okrajem v barvě pozadí pro hluboký výřez */
+.nav-indicator .active-circle {
+  width: 56px;
+  height: 56px;
+  background: #1a202c;
+  border-radius: 50%;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18), 
+              0 0 0 6px #121824; /* Okraj v barvě pozadí aplikace */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tlačítka */
 .nav-item {
   background: none;
   border: none;
@@ -109,74 +145,49 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  color: #b0bec5; /* Šedý text */
+  padding-top: 4px;
+  gap: 3px;
+  color: #64748b;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  padding: 4px;
-  transition: all 0.2s ease;
-  flex: 1;
+  width: 100%;
+  height: 100%;
+  z-index: 1002;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-/* Postranní ikony – ve výchozím stavu hezky šedivé pomocí filtru */
 .nav-icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
-  /* Převádí černou na přesnou světlou šedou barvu (#b0bec5) */
-  filter: brightness(0) saturate(100%) invert(77%) sepia(8%) saturate(579%) hue-rotate(170deg) brightness(92%) contrast(88%);
-  transition: filter 0.2s ease;
+  filter: brightness(0) saturate(100%) invert(38%) sepia(18%) saturate(534%) hue-rotate(180deg) brightness(95%) contrast(88%);
+  transition: filter 0.3s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-item .label {
   display: block;
+  line-height: 1;
+  transition: color 0.3s ease;
 }
 
-/* Aktivní postranní tlačítko – ikona zčerná (filtr se zruší, zůstane původní černá PNG) a text zčerná */
+/* Aktivní stav – ikona vyjede přesně do středu koule a zbělá */
 .nav-item.active {
-  color: #1a202c;
+  color: #0f172a;
   font-weight: 700;
 }
 
 .nav-item.active .nav-icon {
-  filter: none; /* Vrátí původní černou barvu z PNG */
+  filter: brightness(0) invert(1); /* Zářivě bílá ikona */
+  transform: translateY(-28px); /* Vyjede přesně do vycentrované koule */
 }
 
-/* Prostřední vystouplé tlačítko */
-.center-button-wrapper {
-  position: relative;
-  top: -28px;
-  background: #f4f6f8;
-  padding: 6px;
-  border-radius: 50%;
-  margin: 0 6px;
-  box-shadow: 0 -6px 15px rgba(0, 0, 0, 0.03);
+.nav-item.active .label {
+  transform: translateY(0);
 }
 
-.center-btn {
-  background: #1a202c !important;
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  cursor: pointer;
-  border: none;
-}
-
-/* Středová ikona – trvale bílá, na proklik nereaguje */
-.center-icon {
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-  filter: brightness(0) invert(1); /* Trvale bílá */
-}
-
-/* Skrytí mobilní lišty na PC */
+/* Skrytí na PC */
 @media (min-width: 769px) {
   .mobile-nav {
     display: none;

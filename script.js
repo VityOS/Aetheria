@@ -1,4 +1,4 @@
-// Data pro váš svět (s localStorage podporou)
+// Defaultní data
 const defaultData = {
   cities: [
     { name: "Aetheria Prime", desc: "Hlavní vznášející se citadel světa." },
@@ -12,34 +12,41 @@ const defaultData = {
   ]
 };
 
-// Načtení z localStorage nebo použií defaultních dat
 let worldData = JSON.parse(localStorage.getItem('aetheriaData')) || defaultData;
 
-// Funkce pro přepínání záložek
 function switchTab(tabId, element) {
-  // Skrýt všechny sekce
   document.querySelectorAll('.tab-content').forEach(tab => {
     tab.classList.remove('active');
   });
 
-  // Zobrazit vybranou sekci
   const targetTab = document.getElementById(tabId);
   if (targetTab) {
     targetTab.classList.add('active');
   }
 
-  // Odstranit active třídu ze všech tlačítek
-  document.querySelectorAll('.nav-item').forEach(btn => {
-    btn.classList.remove('active');
-  });
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  navItems.forEach(btn => btn.classList.remove('active'));
 
-  // Přidat active třídu kliknutému tlačítku
   if (element) {
     element.classList.add('active');
+    const index = navItems.indexOf(element);
+    moveIndicator(index);
   }
 }
 
-// Funkce pro vykreslení seznamů
+function moveIndicator(index) {
+  const indicator = document.getElementById('nav-indicator');
+  const navContainer = document.querySelector('.nav-container');
+  
+  if (indicator && index !== -1) {
+    indicator.style.transform = `translateX(${index * 100}%)`;
+    
+    // Přesné středy 5 sloupců pro masku výřezu: 10%, 30%, 50%, 70%, 90%
+    const centerPositions = ['10%', '30%', '50%', '70%', '90%'];
+    navContainer.style.setProperty('--indicator-pos', centerPositions[index]);
+  }
+}
+
 function renderData() {
   const citiesList = document.getElementById('cities-list');
   const charactersList = document.getElementById('characters-list');
@@ -73,7 +80,12 @@ function renderData() {
   }
 }
 
-// Inicializace po načtení stránky
 document.addEventListener('DOMContentLoaded', () => {
   renderData();
+  
+  const navItems = Array.from(document.querySelectorAll('.nav-item'));
+  const activeIndex = navItems.findIndex(btn => btn.classList.contains('active'));
+  if (activeIndex !== -1) {
+    moveIndicator(activeIndex);
+  }
 });
