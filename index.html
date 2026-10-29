@@ -4,295 +4,90 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aetheria Worldbuilder</title>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- TAPETA NA POZADÍ -->
-  <div id="bgBackdrop" class="bg-backdrop"></div>
-  <div class="bg-overlay"></div>
+  <!-- Horní lišta s názvem -->
+  <header class="app-header">
+    <h1>Aetheria</h1>
+  </header>
 
-  <!-- LEVÝ NAVIGAČNÍ SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand">
-      <i data-lucide="compass" class="brand-icon"></i>
-      <div class="brand-text">
-        <span class="brand-title">AETHERIA</span>
-        <span class="brand-sub">Worldbuilder</span>
-      </div>
-    </div>
-
-    <nav class="nav-menu">
-      <button class="nav-item active" onclick="switchSection('dashboard', this)">
-        <i data-lucide="layout-dashboard"></i> <span>Přehled</span>
-      </button>
-      <button class="nav-item" onclick="switchSection('nations', this)">
-        <i data-lucide="flag"></i> <span>Národy & Říše</span>
-      </button>
-      <button class="nav-item" onclick="switchSection('bestiary', this)">
-        <i data-lucide="skull"></i> <span>Bestiář</span>
-      </button>
-      <button class="nav-item" onclick="switchSection('map', this)">
-        <i data-lucide="map"></i> <span>Mapa Světa</span>
-      </button>
-      <button class="nav-item" onclick="switchSection('story', this)">
-        <i data-lucide="book-open"></i> <span>Příběh & Poznámky</span>
-      </button>
-      <button class="nav-item" onclick="switchSection('gallery', this)">
-        <i data-lucide="image"></i> <span>Galerie</span>
-      </button>
-    </nav>
-
-    <div class="sidebar-bottom">
-      <button class="btn-reset" onclick="exportData()" title="Stáhnout zálohu dat">
-        <i data-lucide="download"></i> <span>Exportovat zálohu</span>
-      </button>
-      <button class="btn-reset" onclick="triggerImport()" title="Nahrát zálohu ze souboru">
-        <i data-lucide="upload"></i> <span>Importovat zálohu</span>
-      </button>
-      <input type="file" id="importFileInput" style="display:none" onchange="importData(event)" accept=".json">
-      
-      <button class="btn-reset" onclick="resetData()" title="Obnovit výchozí data" style="margin-top: 0.5rem; color: #c85250;">
-        <i data-lucide="rotate-ccw"></i> <span>Obnovit výchozí</span>
-      </button>
-    </div>
-  </aside>
-
-  <!-- HLAVNÍ OBSAHOVÁ ČÁST -->
-  <main class="main-content">
-
-    <!-- SEKCE 1: PŘEHLED / HERO DASHBOARD -->
-    <section id="sec-dashboard" class="app-section active">
-      <div class="hero-layout">
-        <div class="hero-left">
-          <div class="hero-tag">AETHERIA ARCHIVE</div>
-          <h1 id="heroTitle" class="hero-main-title">Aethelgard</h1>
-          <p id="heroDesc" class="hero-desc-text">
-            Prozkoumejte historii, tvory a příběhy světa Aetheria. Vyberte si ze sekcí v menu nebo použijte rychlé odkazové widgety.
-          </p>
-          <div class="hero-actions">
-            <button class="btn-primary" onclick="openCreateNationModal()">
-              <i data-lucide="plus"></i> Nový národ
-            </button>
-          </div>
-        </div>
-
-        <div class="hero-right">
-          <div class="carousel-header">
-            <span class="carousel-title">Rychlé přesměrování</span>
-            <div class="carousel-controls">
-              <button class="c-btn" onclick="slideCarousel(-1)"><i data-lucide="chevron-left"></i></button>
-              <button class="c-btn" onclick="slideCarousel(1)"><i data-lucide="chevron-right"></i></button>
-            </div>
-          </div>
-
-          <div class="carousel-track-wrapper">
-            <div id="dashboardWidgetsTrack" class="carousel-track"></div>
-          </div>
-        </div>
+  <!-- Hlavní obsahový prostor -->
+  <main id="app-content" class="content-container">
+    
+    <!-- Sekce: Čtení (Výchozí) -->
+    <section id="cteni" class="tab-content active">
+      <h2>Příběh & Čtení</h2>
+      <div class="card">
+        <h3>Vítejte v Aetherii</h3>
+        <p>Zde můžete číst příběhy, záznamy ze světa a hlavní lore.</p>
       </div>
     </section>
 
-    <!-- SEKCE 2: NÁRODY & ŘÍŠE -->
-    <section id="sec-nations" class="app-section">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Národy & Říše</h2>
-          <p class="section-sub">Království, kmeny a frakce světa Aetheria</p>
-        </div>
-        <button class="btn-primary" onclick="openCreateNationModal()"><i data-lucide="plus"></i> Přidat národ</button>
-      </div>
-      <div id="nationsGrid" class="cards-grid"></div>
-    </section>
-
-    <!-- DETAIL NÁRODU -->
-    <section id="sec-nation-detail" class="app-section">
-      <button class="btn-back" onclick="switchSection('nations')">
-        <i data-lucide="arrow-left"></i> Zpět na seznam národů
-      </button>
-      <div class="section-header" style="margin-top: 1rem;">
-        <div>
-          <h2 id="nationDetailTitle" class="section-title">Název Národu</h2>
-          <p id="nationDetailDesc" class="section-sub">Popis národu</p>
-        </div>
-        <button class="btn-primary" onclick="openCreateCityModal()"><i data-lucide="plus"></i> Přidat město</button>
-      </div>
-      <div id="nationCitiesGrid" class="cards-grid"></div>
-    </section>
-
-    <!-- SEKCE 3: BESTIÁŘ -->
-    <section id="sec-bestiary" class="app-section">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Katalog Bytostí & Bestií</h2>
-          <p class="section-sub">Přehled monster, tvorů a hrdinů Aetherie</p>
-        </div>
-        <button class="btn-primary" onclick="openCreateBestiaryModal()"><i data-lucide="plus"></i> Přidat tvora</button>
-      </div>
-
-      <div id="bestiaryFilters" class="filter-bar"></div>
-      <div id="bestiaryGrid" class="editorial-grid"></div>
-    </section>
-
-    <!-- DETAIL TVORA -->
-    <section id="sec-beast-detail" class="app-section">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button class="btn-back" onclick="switchSection('bestiary')">
-          <i data-lucide="arrow-left"></i> Zpět do Bestiáře
-        </button>
-        <button class="btn-primary" id="btnEditBeast" onclick="" style="margin-bottom: 1.5rem;">
-          <i data-lucide="edit-3"></i> Upravit tvora
-        </button>
-      </div>
-      <div class="concept-page-sheet" id="beastDetailSheet"></div>
-    </section>
-
-    <!-- SEKCE 4: MAPA -->
-    <section id="sec-map" class="app-section">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Interaktivní Mapa Světa</h2>
-          <p class="section-sub">Klikněte kamkoliv na mapu pro přidání nového pinu</p>
-        </div>
-      </div>
-      <div class="map-wrapper" id="worldMap" onclick="handleMapClick(event)">
-        <div class="map-overlay"></div>
+    <!-- Sekce: Mapa -->
+    <section id="mapa" class="tab-content">
+      <h2>Mapa Světa</h2>
+      <div class="card map-placeholder">
+        <p>🗺️ [Zde bude interaktivní mapa Aetherie]</p>
       </div>
     </section>
 
-    <!-- SEKCE 5: PŘÍBĚH & POZNÁMKY -->
-    <section id="sec-story" class="app-section">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Příběh & Kapitoly</h2>
-          <p class="section-sub">Textový editor vašich příběhů</p>
-        </div>
-        <button class="btn-primary" onclick="createNewChapter()"><i data-lucide="plus"></i> Nová kapitola</button>
-      </div>
-      <div class="story-editor-layout">
-        <div class="chapters-sidebar" id="chapterListContainer"></div>
-        <div class="editor-main">
-          <textarea id="chapterEditor" class="editor-textarea" placeholder="Začněte psát kapitolu..." oninput="updateChapterText(this.value)"></textarea>
-          <div class="editor-footer" id="wordCount">0 slov | 0 znaků</div>
-        </div>
-      </div>
+    <!-- Sekce: Lokality -->
+    <section id="lokality" class="tab-content">
+      <h2>Města a Lokality</h2>
+      <div id="cities-list" class="items-grid"></div>
     </section>
 
-    <!-- SEKCE 6: GALERIE -->
-    <section id="sec-gallery" class="app-section">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Galerie Konceptů</h2>
-          <p class="section-sub">Vizuální inspirace a artbookové koncepty</p>
-        </div>
-        <button class="btn-primary" onclick="addGalleryImage()"><i data-lucide="plus"></i> Přidat obrázek</button>
-      </div>
-      <div id="galleryGrid" class="gallery-grid"></div>
+    <!-- Sekce: Postavy -->
+    <section id="postavy" class="tab-content">
+      <h2>Postavy</h2>
+      <div id="characters-list" class="items-grid"></div>
+    </section>
+
+    <!-- Sekce: Bestiář -->
+    <section id="bestiar" class="tab-content">
+      <h2>Bestiář</h2>
+      <div id="bestiary-list" class="items-grid"></div>
     </section>
 
   </main>
 
-  <!-- MODÁLNÍ OKNA -->
-  <div id="createBestiaryModal" class="modal-backdrop">
-    <div class="modal-box">
-      <h3 id="bestiaryModalTitle" style="font-size:1.4rem; margin-bottom:1rem;">Nový Tvor / Bestie</h3>
-      <input type="hidden" id="editBeastId">
-      <div class="form-group">
-        <label>Číslo tvora</label>
-        <input type="text" id="newBeastNum" class="form-control" placeholder="01">
-      </div>
-      <div class="form-group">
-        <label>Jméno tvora / Titul</label>
-        <input type="text" id="newBeastTitle" class="form-control" placeholder="Např. Melinoë">
-      </div>
-      <div class="form-group">
-        <label>Podtitul / Živel</label>
-        <input type="text" id="newBeastSubcat" class="form-control" placeholder="Keeper of Ruòn">
-      </div>
-      <div class="form-group">
-        <label>Popis tvora & Lore</label>
-        <textarea id="newBeastDesc" class="form-control" rows="4"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Poznámky z výzkumu</label>
-        <textarea id="newBeastNotes" class="form-control" rows="2" placeholder="Ruční poznámky..."></textarea>
-      </div>
-      <div class="form-group">
-        <label>Schopnosti a kouzla</label>
-        <input type="text" id="newBeastSpells" class="form-control" placeholder="Oddělená čárkami...">
-      </div>
-      <div class="form-group">
-        <label>URL hlavní ilustrace (Pozadí karty)</label>
-        <input type="text" id="newBeastImg" class="form-control" placeholder="https://...">
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem;">
-        <button class="btn-secondary" onclick="closeModal('createBestiaryModal')">Zrušit</button>
-        <button class="btn-primary" onclick="saveNewBeast()">Uložit tvora</button>
-      </div>
-    </div>
-  </div>
+  <!-- Spodní mobilní navigace podle vašeho designu -->
+  <nav class="mobile-nav">
+    <div class="nav-container">
+      
+      <!-- Vlevo -->
+      <button class="nav-item" onclick="switchTab('mapa', this)">
+        <span class="icon">🗺️</span>
+        <span class="label">Mapa</span>
+      </button>
+      
+      <button class="nav-item" onclick="switchTab('lokality', this)">
+        <span class="icon">🏰</span>
+        <span class="label">Lokality</span>
+      </button>
 
-  <div id="createNationModal" class="modal-backdrop">
-    <div class="modal-box">
-      <h3 style="font-size:1.4rem; margin-bottom:1rem;">Nový Národ / Říše</h3>
-      <div class="form-group">
-        <label>Název národu</label>
-        <input type="text" id="newNationTitle" class="form-control" placeholder="Např. Království Aethelgard">
+      <!-- Uprostřed: Hlavní tlačítko Čtení -->
+      <div class="center-button-wrapper">
+        <button class="nav-item center-btn active" onclick="switchTab('cteni', this)">
+          <span class="icon">📖</span>
+        </button>
       </div>
-      <div class="form-group">
-        <label>Typ zřízení</label>
-        <input type="text" id="newNationSub" class="form-control" placeholder="Např. Monarchie">
-      </div>
-      <div class="form-group">
-        <label>Popis & Historie</label>
-        <textarea id="newNationDesc" class="form-control" rows="3"></textarea>
-      </div>
-      <div class="form-group">
-        <label>URL obrázku</label>
-        <input type="text" id="newNationImg" class="form-control" placeholder="https://...">
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem;">
-        <button class="btn-secondary" onclick="closeModal('createNationModal')">Zrušit</button>
-        <button class="btn-primary" onclick="saveNewNation()">Uložit národ</button>
-      </div>
-    </div>
-  </div>
 
-  <div id="createCityModal" class="modal-backdrop">
-    <div class="modal-box">
-      <h3 style="font-size:1.4rem; margin-bottom:1rem;">Nové Město / Lokace</h3>
-      <div class="form-group">
-        <label>Název města</label>
-        <input type="text" id="newCityTitle" class="form-control" placeholder="Např. Ostrý Úsvit">
-      </div>
-      <div class="form-group">
-        <label>Přiřadit k národu</label>
-        <select id="newCityNationSelect" class="form-control"></select>
-      </div>
-      <div class="form-group">
-        <label>Typ lokace</label>
-        <input type="text" id="newCitySubcat" class="form-control" placeholder="Např. Hlavní pevnost">
-      </div>
-      <div class="form-group">
-        <label>Popis lokace</label>
-        <textarea id="newCityDesc" class="form-control" rows="3"></textarea>
-      </div>
-      <div class="form-group">
-        <label>URL obrázku</label>
-        <input type="text" id="newCityImg" class="form-control" placeholder="https://...">
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem;">
-        <button class="btn-secondary" onclick="closeModal('createCityModal')">Zrušit</button>
-        <button class="btn-primary" onclick="saveNewCity()">Uložit město</button>
-      </div>
+      <!-- Vpravo -->
+      <button class="nav-item" onclick="switchTab('postavy', this)">
+        <span class="icon">🧙‍♂️</span>
+        <span class="label">Postavy</span>
+      </button>
+
+      <button class="nav-item" onclick="switchTab('bestiar', this)">
+        <span class="icon">🐉</span>
+        <span class="label">Bestiář</span>
+      </button>
+
     </div>
-  </div>
+  </nav>
 
   <script src="script.js"></script>
 </body>
