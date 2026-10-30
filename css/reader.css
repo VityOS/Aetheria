@@ -1,0 +1,37 @@
+/* Reading surface and graphite controls. */
+#cteni { color:#343333; }
+#cteni h2 { color:inherit; margin:12px 0 26px; font-size:28px; }
+.reader-article { font-family:Georgia,'Times New Roman',serif; font-size:19px; line-height:1.85; white-space:pre-wrap; overflow-wrap:anywhere; padding:0 4px 60px; outline:none; min-height:45vh; }
+.reader-article[contenteditable=true] { border-left:2px solid #827d77; padding-left:14px; }
+.reader-caption { color:#827d77; font-size:12px; margin-bottom:18px; }
+body { transition:background-color .25s,color .25s; }
+body.reader-dark:has(#cteni.active) { background:#222121; color:#f0e7da; }
+body.reader-dark #cteni { color:#f0e7da; }
+body.reader-dark #cteni .reader-caption { color:#b7afa5; }
+.mobile-nav { transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .3s; }
+body.reader-focused .mobile-nav { transform:translateX(-50%) translateY(160px); opacity:0; pointer-events:none; }
+.reader-dock { position:fixed; bottom:calc(20px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%); width:calc(100% - 32px); max-width:420px; height:56px; display:flex; align-items:center; justify-content:flex-end; gap:7px; z-index:1100; }
+.reader-dock[hidden] { display:none; }
+.reader-tool { background:#343333; color:#f0e7da; border:0; height:44px; border-radius:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; cursor:pointer; }
+.reader-tool:focus-visible,.reader-mode button:focus-visible { outline:2px solid #827d77; outline-offset:3px; }
+.reader-timer { gap:5px; min-width:70px; padding:0 10px; font-variant-numeric:tabular-nums; }
+.reader-timer svg { width:16px; height:16px; }
+.reader-timer[aria-pressed=true] { opacity:.6; }
+.reader-mode { padding:4px; gap:2px; }
+.reader-mode button { border:0; background:none; color:#f0e7da; border-radius:20px; padding:8px 9px; font-size:12px; cursor:pointer; }
+.reader-mode button[aria-pressed=true] { background:#f0e7da; color:#343333; }
+.reader-theme { width:44px; }
+.reader-theme svg { width:21px; height:21px; }
+.reader-home { width:56px; height:56px; position:relative; }
+.reader-home img { width:25px; height:25px; filter:brightness(0) invert(91%) sepia(8%) saturate(394%); }
+.reader-home::before { content:''; position:absolute; width:7px; height:7px; border-top:2px solid #827d77; border-left:2px solid #827d77; transform:rotate(45deg); top:-14px; }
+@media(max-width:360px) { .reader-dock { gap:5px; } .reader-home { width:48px; height:48px; } .reader-timer { min-width:62px; padding:0 7px; } .reader-mode button { padding:8px 7px; } .reader-theme { width:40px; } }
+@media(prefers-reduced-motion:reduce) { .mobile-nav,body { transition:none; } }
+
+body.reader-detached .active-circle { visibility:hidden; }
+body:has(#cteni.active) .app-header { background:#343333; color:#f0e7da; }
+body.reader-dark:has(#cteni.active) .reader-caption { color:#b7afa5; }
+
+/* The detached icon keeps its red color until its horizontal move completes. */
+body.reader-detached .reader-home::before { opacity:0; }
+body.reader-focused .reader-dock:not([inert]) .reader-home::before { opacity:1; }
