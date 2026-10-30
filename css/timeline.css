@@ -1,0 +1,255 @@
+/* ==========================================
+   ČASOVÁ OSA - KŘIVKOVÝ DESIGN
+   ========================================== */
+
+.timeline-container {
+  position: relative;
+  display: flex;
+  height: 540px;
+  background: #0f172a;
+  border-radius: 20px;
+  overflow: hidden;
+  user-select: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Středový zakřivený indikátor (LENS) */
+.timeline-center-marker {
+  position: absolute;
+  left: 110px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 100px;
+  z-index: 40;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-center-marker::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  width: 30px;
+  height: 100%;
+  border-right: 3px solid #38bdf8;
+  border-radius: 0 50px 50px 0;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.7));
+}
+
+.timeline-center-marker::after {
+  content: '';
+  position: absolute;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background: #38bdf8;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #38bdf8;
+}
+
+/* LEVÝ PANEL OSY */
+.timeline-axis-pane {
+  position: relative;
+  width: 140px;
+  flex-shrink: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+
+.timeline-axis-pane::-webkit-scrollbar {
+  display: none;
+}
+
+.timeline-axis-content {
+  position: relative;
+  width: 100%;
+}
+
+.timeline-axis-line {
+  position: absolute;
+  left: 125px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Pás pro časové úseky / období */
+.timeline-range-band {
+  position: absolute;
+  left: 122px;
+  width: 8px;
+  border-radius: 4px;
+  background: var(--band-color, #38bdf8);
+  opacity: 0.35;
+  z-index: 5;
+  box-shadow: 0 0 8px var(--band-color, #38bdf8);
+}
+
+.timeline-range-band .range-band-label {
+  position: absolute;
+  right: 14px;
+  top: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* Uzly s roky */
+.timeline-node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 125px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+  transform: translateY(-50%);
+  z-index: 10;
+  padding-right: 18px;
+}
+
+.timeline-node .node-dot {
+  position: absolute;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  background: #475569;
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+  transition: all 0.2s ease;
+}
+
+.timeline-node.active .node-dot {
+  background: #38bdf8;
+  transform: scale(1.5);
+  box-shadow: 0 0 10px #38bdf8;
+}
+
+.timeline-node .node-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-align: right;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.timeline-node.active .node-label {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* PRAVÝ PANEL S KARTAMI */
+.timeline-stream-pane {
+  flex-grow: 1;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  scroll-behavior: smooth;
+  padding-right: 8px;
+}
+
+.timeline-stream-pane::-webkit-scrollbar {
+  width: 4px;
+}
+
+.timeline-stream-pane::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.timeline-stream-content {
+  position: relative;
+  width: 100%;
+}
+
+.timeline-card-item {
+  position: absolute;
+  left: 8px;
+  width: calc(100% - 16px);
+  background: #1e293b;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transform: translateY(-50%) scale(0.92);
+  opacity: 0.25;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.timeline-card-item.active {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  border-color: #38bdf8;
+  z-index: 20;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.15);
+}
+
+.timeline-card-item.range-card {
+  border-left: 4px solid #ef4444;
+}
+
+.timeline-card-image {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  display: block;
+}
+
+.timeline-card-content {
+  padding: 12px 14px;
+}
+
+.tags-wrapper {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.timeline-card-content span.date-tag {
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.timeline-card-content span.type-badge {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.timeline-card-content h3 {
+  color: #f8fafc;
+  font-size: 15px;
+  margin: 0 0 4px 0;
+}
+
+.timeline-card-content p {
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 0;
+}

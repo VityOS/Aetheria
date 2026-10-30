@@ -1,16 +1,6 @@
 function renderData() {
-  const timelineList = document.getElementById('timeline-list');
   const charactersList = document.getElementById('characters-list');
   const bestiaryList = document.getElementById('bestiary-list');
-
-  if (timelineList) {
-    timelineList.innerHTML = (worldData.timeline || defaultData.timeline).map(item => `
-      <div class="card">
-        <h3>${item.name}</h3>
-        <p>${item.desc}</p>
-      </div>
-    `).join('');
-  }
 
   if (charactersList) {
     charactersList.innerHTML = (worldData.characters || defaultData.characters).map(item => `
