@@ -111,7 +111,13 @@
 
     <!-- SVG Pozadí tvořící bílou lištu -->
     <svg class="nav-bg" viewBox="0 0 380 70">
-      <path id="curve-path" fill="#ffffff" d="" />
+      <defs>
+        <mask id="nav-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="380" height="70" style="mask-type: luminance;">
+          <rect width="380" height="70" fill="white" />
+          <path id="curve-path" style="fill: black;" d="" />
+        </mask>
+      </defs>
+      <rect width="380" height="70" rx="35" fill="#343333" mask="url(#nav-cutout)" />
     </svg>
 
     <!-- Plovoucí indikátor -->

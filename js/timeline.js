@@ -56,7 +56,7 @@ function renderTimeline() {
     const dateLabel = item.date || (item.startDate && item.endDate ? `${item.startDate}–${item.endDate}` : item.startDate) || `Rok ${item.startY}`;
 
     if (isPeriod && item.height > 0) {
-      const color = item.color || '#38bdf8';
+      const color = item.color || '#880909';
       axisHTML += `
         <div class="timeline-range-band" style="top: ${item.top}px; height: ${item.height}px; --band-color: ${color};">
           <span class="range-band-label">${item.title}</span>
@@ -196,4 +196,75 @@ function scrollToEvent(index, smooth = true) {
 
 document.addEventListener('DOMContentLoaded', () => {
   renderTimeline();
+});
+
+// Decorative background only; the scroll positions and magnetic behavior stay unchanged.
+function layoutTimelineInk() {
+  const section = document.getElementById('timeline');
+  const container = section.querySelector('.timeline-container');
+  if (!section.classList.contains('active')) return;
+  let svg = section.querySelector('.timeline-ink');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.classList.add('timeline-ink');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = '<path />';
+    section.prepend(svg);
+  }
+  const rect = container.getBoundingClientRect();
+  const nav = document.querySelector('.mobile-nav');
+  const navRect = nav.getBoundingClientRect();
+  const hasNav = navRect.width > 0;
+  const x = hasNav ? navRect.left + navRect.width * .3 : rect.left + 125;
+  section.style.setProperty('--timeline-axis-x', `${x - rect.left}px`);
+  const bottom = hasNav ? navRect.top : rect.bottom;
+  const neck = Math.max(rect.top, bottom - 120);
+  svg.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+  svg.querySelector('path').setAttribute('d', hasNav ? `
+    M ${x - 1.5} ${rect.top} L ${x - 1.5} ${neck}
+    C ${x - 1.5} ${bottom - 65} ${x - 3} ${bottom - 48} ${x - 14} ${bottom - 30}
+    C ${x - 18} ${bottom - 24} ${x - 21} ${bottom - 20} ${x - 24.25} ${bottom - 14}
+    L ${x - 24.25} ${bottom}
+    L ${x + 24.25} ${bottom}
+    L ${x + 24.25} ${bottom - 14}
+    C ${x + 21} ${bottom - 20} ${x + 18} ${bottom - 24} ${x + 14} ${bottom - 30}
+    C ${x + 3} ${bottom - 48} ${x + 1.5} ${bottom - 65} ${x + 1.5} ${neck}
+    L ${x + 1.5} ${rect.top} Z
+  ` : `M ${x - 1.5} ${rect.top} H ${x + 1.5} V ${bottom} H ${x - 1.5} Z`);
+}
+window.addEventListener('resize', layoutTimelineInk);
+window.addEventListener('scroll', layoutTimelineInk, { passive: true });
+document.addEventListener('aetheria:tabchange', layoutTimelineInk);
+document.addEventListener('DOMContentLoaded', () => {
+  new ResizeObserver(layoutTimelineInk).observe(document.querySelector('.content-container'));
+  layoutTimelineInk();
+});
+
+
+// Visual liquid state is independent of the existing magnetic scroll logic.
+document.addEventListener('DOMContentLoaded', () => {
+  const section = document.getElementById('timeline');
+  const stream = document.getElementById('timeline-stream-pane');
+  let liquidTimer;
+  const settleLiquid = () => {
+    section.classList.remove('timeline-moving');
+    const center = stream.scrollTop + stream.clientHeight / 2;
+    const atEvent = processedEvents.some(event => Math.abs(event.top - center) <= 2);
+    section.classList.toggle('timeline-settled', atEvent);
+  };
+  stream.addEventListener('scroll', () => {
+    section.classList.add('timeline-moving');
+    section.classList.remove('timeline-settled');
+    clearTimeout(liquidTimer);
+    liquidTimer = setTimeout(settleLiquid, 180);
+  }, { passive: true });
+  document.addEventListener('aetheria:tabchange', () => {
+    clearTimeout(liquidTimer);
+    liquidTimer = setTimeout(settleLiquid, 400);
+  });
+  window.addEventListener('resize', () => {
+    clearTimeout(liquidTimer);
+    liquidTimer = setTimeout(settleLiquid, 180);
+  });
+  settleLiquid();
 });

@@ -253,3 +253,106 @@
   line-height: 1.4;
   margin: 0;
 }
+
+/* Open timeline: stationary ink behind the scrolling dates and cards. */
+#timeline { --timeline-axis-x: 125px; --timeline-red: #880909; }
+#timeline h2 { color: #343333; position: relative; z-index: 1; }
+.timeline-ink {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0; overflow: hidden;
+}
+.timeline-ink path { fill: var(--timeline-red); }
+.timeline-container {
+  height: clamp(300px, calc(100dvh - 240px), 520px);
+  background: transparent; border: 0; border-radius: 0;
+  box-shadow: none; overflow: hidden; z-index: 1;
+}
+.timeline-axis-pane { width: calc(var(--timeline-axis-x) + 16px); }
+.timeline-axis-line { display: none; }
+.timeline-node { width: var(--timeline-axis-x); padding-right: 17px; }
+.timeline-node .node-dot {
+  right: -5px; width: 10px; height: 10px;
+  background: var(--timeline-red); border: 2px solid #f0e7da;
+}
+.timeline-node.active .node-dot {
+  background: var(--timeline-red); box-shadow: 0 0 0 4px rgb(136 9 9 / 12%);
+}
+.timeline-node .node-label { color: #796a60; font-size: 11px; }
+.timeline-node.active .node-label { color: #880909; font-size: 12px; }
+.timeline-range-band {
+  left: calc(var(--timeline-axis-x) - 4px);
+  background: var(--band-color, #880909); opacity: .45; box-shadow: none;
+}
+.timeline-range-band .range-band-label { color: #755b4d; }
+.timeline-center-marker { left: calc(var(--timeline-axis-x) - 10px); width: 30px; height: 64px; }
+.timeline-center-marker::before {
+  left: 0; width: 23px; border-color: #880909; filter: none;
+  border-radius: 0 32px 32px 0;
+}
+.timeline-center-marker::after { right: 0; background: #880909; box-shadow: none; width: 6px; height: 6px; }
+.timeline-stream-pane { min-width: 0; padding-right: 0; scrollbar-width: none; }
+.timeline-stream-pane::-webkit-scrollbar { display: none; }
+.timeline-card-item {
+  background: #f9f7f3; border: 0; border-radius: 16px;
+  box-shadow: none; opacity: .3;
+}
+.timeline-card-item.active { border-color: transparent; box-shadow: 0 8px 20px rgb(72 43 27 / 13%); }
+.timeline-card-item.range-card { border-left: 3px solid #880909; }
+.timeline-card-content h3 { color: #343333; }
+.timeline-card-content p { color: #75685e; }
+.timeline-card-content span.date-tag { background: #880909; color: #f9f7f3; }
+.timeline-card-content span.type-badge { background: #efe0d6; color: #880909; }
+.tags-wrapper { flex-wrap: wrap; }
+@media (max-width: 380px) {
+  .timeline-card-content { padding: 10px; }
+  .timeline-card-content h3 { font-size: 14px; }
+  .timeline-card-image { height: 110px; }
+  .timeline-node .node-label { font-size: 10px; }
+}
+
+
+/* Let the circle and the ink read as a single liquid silhouette. */
+body:has(#timeline.active) .mobile-nav { filter: none; }
+body:has(#timeline.active) .active-circle { box-shadow: none; }
+
+/* Simple outlined event markers, with the existing active-state transition. */
+.timeline-node .node-dot {
+  right: -7px;
+  width: 14px;
+  height: 14px;
+  background: #f9f7f3;
+  border: 3px solid #880909;
+  box-shadow: none;
+}
+.timeline-node.active .node-dot {
+  background: #f9f7f3;
+  border-color: #880909;
+  box-shadow: none;
+  transform: scale(1.5);
+}
+
+/* Stationary liquid cursor; event rings flow past it. */
+.timeline-center-marker {
+  left: calc(var(--timeline-axis-x) - 11px);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #191818;
+  z-index: 6;
+  transition: height .24s ease, width .24s ease, left .24s ease, border-radius .24s ease;
+}
+.timeline-center-marker::before,
+.timeline-center-marker::after { display: none; }
+#timeline.timeline-moving .timeline-center-marker {
+  left: calc(var(--timeline-axis-x) - 7px);
+  width: 14px;
+  height: 36px;
+  border-radius: 50%;
+}
+.timeline-node .node-dot {
+  transition: background-color .32s ease, border-color .32s ease, transform .24s ease;
+}
+#timeline.timeline-settled .timeline-node.active .node-dot {
+  background: #191818;
+  border-color: #191818;
+}

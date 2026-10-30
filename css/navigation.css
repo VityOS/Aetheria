@@ -1,5 +1,6 @@
+
 /* ==========================================
-   PLOVOUCÍ SPODNÍ NAVIGACE (SVG KŘIVKA)
+   SPODNÍ NAVIGACE (PŘESNÉ BAREVNÉ ÚPRAVY)
    ========================================== */
 .mobile-nav {
   position: fixed;
@@ -10,7 +11,7 @@
   max-width: 420px;
   height: 70px;
   z-index: 1000;
-  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 12px 30px rgba(52, 51, 51, 0.2));
 }
 
 .nav-bg {
@@ -23,6 +24,7 @@
 }
 
 .nav-bg path {
+  fill: #343333; /* Změněno na Graphite */
   transition: d 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -50,12 +52,13 @@
   z-index: 10;
 }
 
+/* Aktivní plovoucí kruh -> Blood Red */
 .nav-indicator .active-circle {
   width: 56px;
   height: 56px;
-  background: #121824;
+  background: #880909; /* Blood Red */
   border-radius: 50%;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 16px rgba(136, 9, 9, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,11 +66,12 @@
   z-index: 20;
 }
 
+/* Ikona uvnitř aktivního červeného kruhu -> Graphite */
 .indicator-icon {
   width: 24px;
   height: 24px;
   object-fit: contain;
-  filter: brightness(0) invert(1);
+  filter: brightness(0) saturate(100%) invert(97%) sepia(4%) saturate(322%) hue-rotate(330deg) brightness(101%) contrast(96%); /* Porcelain */
 }
 
 .nav-item {
@@ -79,7 +83,7 @@
   justify-content: center;
   padding-top: 4px;
   gap: 3px;
-  color: #64748b;
+  color: #F0E7DA; /* Linen */
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -90,12 +94,22 @@
   position: relative;
 }
 
+/* Neaktivní ikony -> Linen */
 .nav-icon {
   width: 22px;
   height: 22px;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(38%) sepia(18%) saturate(534%) hue-rotate(180deg) brightness(95%) contrast(88%);
+  filter: brightness(0) saturate(100%) invert(91%) sepia(8%) saturate(394%) hue-rotate(330deg) brightness(98%) contrast(92%); /* Linen */
   transition: filter 0.3s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover ikony -> Porcelain */
+.nav-item:hover .nav-icon {
+  filter: brightness(0) saturate(100%) invert(97%) sepia(4%) saturate(322%) hue-rotate(330deg) brightness(101%) contrast(96%); /* Porcelain */
+}
+
+.nav-item:hover {
+  color: #F9F7F3; /* Porcelain */
 }
 
 .nav-item .label {
@@ -105,13 +119,12 @@
 }
 
 .nav-item.active {
-  color: #0f172a;
+  color: #F9F7F3; /* Porcelain */
   font-weight: 700;
   z-index: 30;
 }
 
 .nav-item.active .nav-icon {
-  filter: brightness(0) invert(1);
   transform: translateY(-28px);
   position: relative;
   opacity: 0;
@@ -127,3 +140,5 @@
     display: none;
   }
 }
+
+```

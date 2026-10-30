@@ -20,51 +20,23 @@ function switchTab(tabId, element) {
     const index = navItems.indexOf(element);
     moveIndicator(index);
   }
+  document.dispatchEvent(new Event('aetheria:tabchange'));
 }
 
+// The mask clips the same cutout against the rounded bar at every position.
 function generatePath(centerX) {
-  const w = 380; 
-  const h = 70;  
-  const r = 35;  
-  const R = 32; 
-  const cutoutWidth = 46; 
+  const radius = 32;
+  const cutoutWidth = 46;
 
   return `
-    M ${r},0 
-    L ${centerX - cutoutWidth},0 
-    C ${centerX - R},0 ${centerX - R},${R} ${centerX},${R} 
-    C ${centerX + R},${R} ${centerX + R},0 ${centerX + cutoutWidth},0 
-    L ${w - r},0 
-    A ${r},${r} 0 0 1 ${w},${r} 
-    L ${w},${h - r} 
-    A ${r},${r} 0 0 1 ${w - r},${h} 
-    L ${r},${h} 
-    A ${r},${r} 0 0 1 0,${h - r} 
-    L 0,${r} 
-    A ${r},${r} 0 0 1 ${r},0 
+    M ${centerX - cutoutWidth},-40
+    L ${centerX - cutoutWidth},0
+    C ${centerX - radius},0 ${centerX - radius},${radius} ${centerX},${radius}
+    C ${centerX + radius},${radius} ${centerX + radius},0 ${centerX + cutoutWidth},0
+    L ${centerX + cutoutWidth},-40
     Z
   `;
 }
-
-function generateFlatPath() {
-  const w = 380;
-  const h = 70;
-  const r = 35;
-
-  return `
-    M ${r},0 
-    L ${w - r},0 
-    A ${r},${r} 0 0 1 ${w},${r} 
-    L ${w},${h - r} 
-    A ${r},${r} 0 0 1 ${w - r},${h} 
-    L ${r},${h} 
-    A ${r},${r} 0 0 1 0,${h - r} 
-    L 0,${r} 
-    A ${r},${r} 0 0 1 ${r},0 
-    Z
-  `;
-}
-
 function moveIndicator(index) {
   const indicator = document.getElementById('nav-indicator');
   const pathElement = document.getElementById('curve-path');
@@ -94,11 +66,7 @@ function moveIndicator(index) {
     const centers = [38, 114, 190, 266, 342];
     
     if (pathElement) {
-      if (index === 0 || index === 4) {
-        pathElement.setAttribute('d', generateFlatPath());
-      } else {
-        pathElement.setAttribute('d', generatePath(centers[index]));
-      }
+      pathElement.setAttribute('d', generatePath(centers[index]));
     }
   }
 }
