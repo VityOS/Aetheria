@@ -150,6 +150,13 @@ body {
   z-index: 20; /* Ikona uvnitř kruhu se posune dopředu nad černý podklad */
 }
 
+.indicator-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: brightness(0) invert(1); /* Převede ikonu na čisto bílou */
+}
+
 /* Tlačítka */
 .nav-item {
   background: none;
@@ -189,11 +196,15 @@ body {
 .nav-item.active {
   color: #0f172a;
   font-weight: 700;
+  z-index: 30; /* Posune celé aktivní tlačítko i s ikonou před černý kruh */
 }
 
 .nav-item.active .nav-icon {
   filter: brightness(0) invert(1);
   transform: translateY(-28px);
+  position: relative;
+  opacity: 0;
+  z-index: 30; /* Zajistí, že bílá ikona bude zcela vpopředí */
 }
 
 .nav-item.active .label {

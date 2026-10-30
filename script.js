@@ -66,16 +66,26 @@ function generatePath(centerX) {
 function moveIndicator(index) {
   const indicator = document.getElementById('nav-indicator');
   const pathElement = document.getElementById('curve-path');
-  
+  const activeIcon = document.getElementById('active-icon'); // Načteme element ikony
+  const navItems = document.querySelectorAll('.nav-item');
+
   if (indicator && index !== -1) {
     // Posuneme kuličku
     indicator.style.transform = `translateX(${index * 100}%)`;
+
+    // Nastavíme ikonu v kuličce podle aktivního tlačítka
+    if (activeIcon && navItems[index]) {
+      const currentImg = navItems[index].querySelector('.nav-icon');
+      if (currentImg) {
+        activeIcon.src = currentImg.src;
+        activeIcon.alt = currentImg.alt;
+      }
+    }
     
     // Přesné středy 5 záložek v rámci 380px viewBoxu SVG
-    const centers = [38, 114, 190, 266, 342]; // (10%, 30%, 50%, 70%, 90% ze 380px)
+    const centers = [38, 114, 190, 266, 342];
     const activeCenter = centers[index];
     
-    // Vytvoříme novou plynulou SVG křivku
     if (pathElement) {
       pathElement.setAttribute('d', generatePath(activeCenter));
     }
