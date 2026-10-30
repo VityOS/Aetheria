@@ -356,3 +356,11 @@ body:has(#timeline.active) .active-circle { box-shadow: none; }
   background: #191818;
   border-color: #191818;
 }
+
+
+/* Native touch momentum controls the leader; the follower mirrors instantly. */
+.timeline-axis-pane, .timeline-stream-pane {
+  scroll-behavior: auto;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+}

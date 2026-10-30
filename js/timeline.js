@@ -2,7 +2,6 @@ const PIXELS_PER_YEAR = 4;
 const TOP_PADDING = 260;
 
 let processedEvents = [];
-let isSyncing = false;
 let scrollTimeout = null;
 
 function renderTimeline() {
@@ -94,27 +93,49 @@ function renderTimeline() {
   scrollToEvent(0, false);
 }
 
+let timelineTouching = false;
+
 function setupScrollSync(axisPane, streamPane) {
-  const handleScroll = (source) => {
-    if (isSyncing) return;
-    
-    const target = source === axisPane ? streamPane : axisPane;
-    target.scrollTop = source.scrollTop;
-    updateActiveStates(source.scrollTop);
-
-    // Rychlejší detekce zastavení pro plynulý přechod do magnetu
+  // Mirror native scrolling immediately. Never smooth-scroll the follower:
+  // two independent animations fight each other during touch momentum.
+  const expected = new WeakMap();
+  const scheduleSnap = () => {
     clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      snapToClosestEvent(streamPane);
-    }, 70); 
+    if (!timelineTouching) {
+      scrollTimeout = setTimeout(() => snapToClosestEvent(streamPane), 180);
+    }
   };
-
-  axisPane.addEventListener('scroll', () => handleScroll(axisPane), { passive: true });
-  streamPane.addEventListener('scroll', () => handleScroll(streamPane), { passive: true });
+  const handleScroll = source => {
+    if (expected.has(source) && Math.abs(source.scrollTop - expected.get(source)) < 1) {
+      expected.delete(source);
+      return;
+    }
+    expected.delete(source);
+    const target = source === axisPane ? streamPane : axisPane;
+    if (Math.abs(target.scrollTop - source.scrollTop) > .5) {
+      expected.set(target, source.scrollTop);
+      target.scrollTop = source.scrollTop;
+    }
+    updateActiveStates(source.scrollTop);
+    scheduleSnap();
+  };
+  [axisPane, streamPane].forEach(pane => {
+    pane.addEventListener('scroll', () => handleScroll(pane), { passive: true });
+    pane.addEventListener('touchstart', () => {
+      timelineTouching = true;
+      clearTimeout(scrollTimeout);
+      // A new gesture takes control immediately, even during a magnetic glide.
+      streamPane.scrollTo({ top: streamPane.scrollTop, behavior: 'instant' });
+      axisPane.scrollTo({ top: axisPane.scrollTop, behavior: 'instant' });
+    }, { passive: true });
+    const release = () => { timelineTouching = false; scheduleSnap(); };
+    pane.addEventListener('touchend', release, { passive: true });
+    pane.addEventListener('touchcancel', release, { passive: true });
+  });
 }
 
 function snapToClosestEvent(streamPane) {
-  if (isSyncing) return;
+  if (timelineTouching) return;
   const containerHeight = streamPane.clientHeight;
   const currentCenter = streamPane.scrollTop + (containerHeight / 2);
 
@@ -172,27 +193,14 @@ function scrollToEvent(index, smooth = true) {
   // Zamezí zbytečnému překreslování, pokud už jsme přesně na místě
   if (Math.abs(streamPane.scrollTop - targetTop) < 1) return;
 
-  isSyncing = true;
-
-  // Plynulý dojezd obou panelů současně
-  streamPane.scrollTo({
-    top: targetTop,
-    behavior: smooth ? 'smooth' : 'auto'
-  });
-
-  if (axisPane) {
-    axisPane.scrollTo({
-      top: targetTop,
-      behavior: smooth ? 'smooth' : 'auto'
-    });
+  clearTimeout(scrollTimeout);
+  streamPane.scrollTo({ top: targetTop, behavior: smooth ? 'smooth' : 'instant' });
+  if (!smooth && axisPane) {
+    axisPane.scrollTop = streamPane.scrollTop;
+    updateActiveStates(streamPane.scrollTop);
   }
-
-  updateActiveStates(targetTop);
-
-  setTimeout(() => {
-    isSyncing = false;
-  }, smooth ? 350 : 50);
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
   renderTimeline();
@@ -267,4 +275,13 @@ document.addEventListener('DOMContentLoaded', () => {
     liquidTimer = setTimeout(settleLiquid, 180);
   });
   settleLiquid();
+});
+
+// The section is hidden during initial rendering; center it once it is visible.
+document.addEventListener('aetheria:tabchange', () => {
+  const section = document.getElementById('timeline');
+  if (!section.classList.contains('active')) return;
+  const cards = [...section.querySelectorAll('.timeline-card-item')];
+  const selected = Math.max(0, cards.findIndex(card => card.classList.contains('active')));
+  scrollToEvent(selected, false);
 });
