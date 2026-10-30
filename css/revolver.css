@@ -26,3 +26,38 @@
 
 /* Child visibility must not override the closed menu's hidden state. */
 .revolver-menu:not(.open) { display:none; }
+
+
+.revolver-dismiss {
+  position:absolute; left:36px; top:36px; width:24px; height:24px;
+  padding:0; border:2px solid #f0e7da; border-radius:50%;
+  background:#827d77; color:#fff; font-size:18px; line-height:1;
+  display:grid; place-items:center; cursor:pointer; z-index:4;
+  pointer-events:none; opacity:0; transition:opacity .2s ease;
+}
+.revolver-menu.ready .revolver-dismiss { pointer-events:auto; opacity:1; }
+.revolver-dismiss:hover { background:#625e59; }
+.revolver-dismiss:focus-visible { outline:2px solid #880909; outline-offset:2px; }
+.revolver-menu.search-active .revolver-dismiss { display:none; }
+
+.revolver-menu.closing .revolver-dismiss { opacity:1; transition:none; }
+.revolver-menu.closing .revolver-ring { pointer-events:none; }
+
+/* Draw a centered cross independently of the font's glyph metrics. */
+.revolver-dismiss {
+  background:#343333;
+  color:#f0e7da;
+  font-size:0;
+}
+.revolver-dismiss::before,
+.revolver-dismiss::after {
+  content:'';
+  position:absolute;
+  left:50%; top:50%;
+  width:10px; height:2px;
+  border-radius:1px;
+  background:#f0e7da;
+  transform:translate(-50%,-50%) rotate(45deg);
+}
+.revolver-dismiss::after { transform:translate(-50%,-50%) rotate(-45deg); }
+.revolver-dismiss:hover { background:#454343; }

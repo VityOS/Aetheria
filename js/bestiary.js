@@ -59,7 +59,7 @@ async function setRevolverOpen(open, navigationAnimation) {
   cancelAnimationFrame(rotationFrame);
   stageAnimation?.cancel();
   menu.getAnimations({subtree:true}).forEach(animation => animation.cancel());
-  menu.classList.remove('ready', 'open', 'search-active');
+  menu.classList.remove('ready', 'open', 'search-active', 'closing');
   menu.querySelector('.search-wrapper').classList.remove('expanded');
   menu.inert = true;
   drag = null;
@@ -185,3 +185,39 @@ document.addEventListener('DOMContentLoaded', () => {
   paintRevolver();
 });
 
+
+
+async function dismissRevolver() {
+  const menu = document.getElementById('revolver-menu');
+  if (!menu.classList.contains('ready')) return;
+  const generation = ++revolverGeneration;
+  menu._requestedOpen = false;
+  cancelAnimationFrame(rotationFrame);
+  drag = null;
+  document.querySelectorAll('.nav-item')[4].focus({ preventScroll: true });
+  const visible = slots().filter(slot => getComputedStyle(slot).visibility === 'visible');
+  menu.classList.add('closing');
+  menu.classList.remove('ready');
+  menu.inert = true;
+  const animations = visible.reverse().map((slot,index) => slot.animate([
+    {transform:getComputedStyle(slot).transform,opacity:getComputedStyle(slot).opacity},
+    {transform:'translate(-22px,-22px) scale(.08)',opacity:0}
+  ], {duration:reducedMotion()?0:240,delay:reducedMotion()?0:index*45,fill:'forwards',easing:'cubic-bezier(.4,0,.7,1)'}));
+  const dismiss = menu.querySelector('.revolver-dismiss');
+  animations.push(dismiss.animate([
+    {transform:'translate(0,0) scale(1)',opacity:1},
+    {transform:'translate(-20px,-20px) scale(.1)',opacity:0}
+  ], {duration:reducedMotion()?0:240,fill:'forwards',easing:'ease-in'}));
+  await Promise.all(animations.map(animation => animation.finished.catch(()=>{})));
+  if (generation !== revolverGeneration) return;
+  const stage = menu.querySelector('.revolver-stage');
+  const start = getComputedStyle(stage).transform;
+  stageAnimation?.cancel();
+  stageAnimation = stage.animate([
+    {transform:start,opacity:1},
+    {transform:'translateY(0) scale(.75)',opacity:0}
+  ], {duration:reducedMotion()?0:360,fill:'forwards',easing:'cubic-bezier(.45,0,.8,.4)'});
+  await stageAnimation.finished.catch(()=>{});
+  if (generation !== revolverGeneration) return;
+  setRevolverOpen(false);
+}
