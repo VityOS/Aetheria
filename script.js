@@ -66,14 +66,13 @@ function generatePath(centerX) {
 function moveIndicator(index) {
   const indicator = document.getElementById('nav-indicator');
   const pathElement = document.getElementById('curve-path');
-  const activeIcon = document.getElementById('active-icon'); // Načteme element ikony
+  const activeIcon = document.getElementById('active-icon'); 
   const navItems = document.querySelectorAll('.nav-item');
 
   if (indicator && index !== -1) {
     // Posuneme kuličku
     indicator.style.transform = `translateX(${index * 100}%)`;
 
-    // Nastavíme ikonu v kuličce podle aktivního tlačítka
     if (activeIcon && navItems[index]) {
       const currentImg = navItems[index].querySelector('.nav-icon');
       if (currentImg) {
@@ -82,14 +81,39 @@ function moveIndicator(index) {
       }
     }
     
-    // Přesné středy 5 záložek v rámci 380px viewBoxu SVG
+    // Definujeme středy pro jednotlivé záložky
     const centers = [38, 114, 190, 266, 342];
-    const activeCenter = centers[index];
     
     if (pathElement) {
-      pathElement.setAttribute('d', generatePath(activeCenter));
+      // Pokud jsme na krajních pozicích (0 nebo 4), vykreslíme rovnou lištu bez výřezu,
+      // čímž úplně eliminujeme nehezké zobáčky na okrajích.
+      if (index === 0 || index === 4) {
+        pathElement.setAttribute('d', generateFlatPath());
+      } else {
+        pathElement.setAttribute('d', generatePath(centers[index]));
+      }
     }
   }
+}
+
+// Pomocná funkce pro rovnou lištu bez výřezu (pro krajní položky)
+function generateFlatPath() {
+  const w = 380;
+  const h = 70;
+  const r = 35;
+
+  return `
+    M ${r},0 
+    L ${w - r},0 
+    A ${r},${r} 0 0 1 ${w},${r} 
+    L ${w},${h - r} 
+    A ${r},${r} 0 0 1 ${w - r},${h} 
+    L ${r},${h} 
+    A ${r},${r} 0 0 1 0,${h - r} 
+    L 0,${r} 
+    A ${r},${r} 0 0 1 ${r},0 
+    Z
+  `;
 }
 
 function renderData() {
