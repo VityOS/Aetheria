@@ -5,6 +5,18 @@ let processedEvents = [];
 let scrollTimeout = null;
 
 function renderTimeline() {
+  // A single native scroll surface moves dates and cards together.
+  const container = document.querySelector('.timeline-container');
+  if (!container.querySelector('.timeline-scroll')) {
+    const cards = document.getElementById('timeline-stream-pane');
+    cards.id = 'timeline-cards-pane';
+    cards.className = 'timeline-cards-pane';
+    const scroll = document.createElement('div');
+    scroll.id = 'timeline-stream-pane';
+    scroll.className = 'timeline-scroll';
+    container.append(scroll);
+    scroll.append(document.getElementById('timeline-axis-pane'), cards);
+  }
   const axisContent = document.getElementById('timeline-axis-content');
   const streamContent = document.getElementById('timeline-stream-content');
   const axisPane = document.getElementById('timeline-axis-pane');
@@ -96,42 +108,44 @@ function renderTimeline() {
 let timelineTouching = false;
 
 function setupScrollSync(axisPane, streamPane) {
-  // Mirror native scrolling immediately. Never smooth-scroll the follower:
-  // two independent animations fight each other during touch momentum.
-  const expected = new WeakMap();
+  const nativeScrollEnd = 'onscrollend' in streamPane;
   const scheduleSnap = () => {
     clearTimeout(scrollTimeout);
-    if (!timelineTouching) {
-      scrollTimeout = setTimeout(() => snapToClosestEvent(streamPane), 180);
-    }
+    if (!timelineTouching) scrollTimeout = setTimeout(() => snapToClosestEvent(streamPane), 250);
   };
-  const handleScroll = source => {
-    if (expected.has(source) && Math.abs(source.scrollTop - expected.get(source)) < 1) {
-      expected.delete(source);
-      return;
-    }
-    expected.delete(source);
-    const target = source === axisPane ? streamPane : axisPane;
-    if (Math.abs(target.scrollTop - source.scrollTop) > .5) {
-      expected.set(target, source.scrollTop);
-      target.scrollTop = source.scrollTop;
-    }
-    updateActiveStates(source.scrollTop);
-    scheduleSnap();
-  };
-  [axisPane, streamPane].forEach(pane => {
-    pane.addEventListener('scroll', () => handleScroll(pane), { passive: true });
-    pane.addEventListener('touchstart', () => {
-      timelineTouching = true;
-      clearTimeout(scrollTimeout);
-      // A new gesture takes control immediately, even during a magnetic glide.
-      streamPane.scrollTo({ top: streamPane.scrollTop, behavior: 'instant' });
-      axisPane.scrollTo({ top: axisPane.scrollTop, behavior: 'instant' });
-    }, { passive: true });
-    const release = () => { timelineTouching = false; scheduleSnap(); };
-    pane.addEventListener('touchend', release, { passive: true });
-    pane.addEventListener('touchcancel', release, { passive: true });
+  streamPane.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    updateActiveStates(streamPane.scrollTop);
+    if (!nativeScrollEnd) scheduleSnap();
+  }, { passive: true });
+  streamPane.addEventListener('scrollend', () => {
+    if (!timelineTouching) snapToClosestEvent(streamPane);
   });
+  streamPane.addEventListener('touchstart', () => {
+    timelineTouching = true;
+    clearTimeout(scrollTimeout);
+    streamPane.scrollTo({ top: streamPane.scrollTop, behavior: 'instant' });
+  }, { passive: true });
+  const release = () => {
+    timelineTouching = false;
+    // Handles a finger held still before release, with no subsequent scrollend.
+    if (!nativeScrollEnd) scheduleSnap();
+    else scrollTimeout = setTimeout(() => {
+      if (!timelineTouching) snapToClosestEvent(streamPane);
+    }, 350);
+  };
+  streamPane.addEventListener('touchend', release, { passive: true });
+  streamPane.addEventListener('touchcancel', release, { passive: true });
+  let origin;
+  let dragged = false;
+  streamPane.addEventListener('pointerdown', e => { origin = [e.clientX, e.clientY]; dragged = false; }, { passive: true });
+  streamPane.addEventListener('pointermove', e => {
+    if (origin && Math.hypot(e.clientX - origin[0], e.clientY - origin[1]) > 8) dragged = true;
+  }, { passive: true });
+  streamPane.addEventListener('click', e => {
+    if (dragged) { e.preventDefault(); e.stopPropagation(); }
+    origin = null;
+  }, true);
 }
 
 function snapToClosestEvent(streamPane) {
@@ -196,7 +210,6 @@ function scrollToEvent(index, smooth = true) {
   clearTimeout(scrollTimeout);
   streamPane.scrollTo({ top: targetTop, behavior: smooth ? 'smooth' : 'instant' });
   if (!smooth && axisPane) {
-    axisPane.scrollTop = streamPane.scrollTop;
     updateActiveStates(streamPane.scrollTop);
   }
 }
