@@ -1,147 +1,28 @@
-/* ==========================================
-   REVOLVER MENU KATEGORIÍ (OTÁČECÍ BUBEN)
-   ========================================== */
-.revolver-menu {
-  position: absolute;
-  right: calc(10% - 28px); 
-  top: -28px;
-  width: 56px;
-  height: 56px;
-  pointer-events: none;
-  z-index: 50;
-  transition: opacity 0.3s ease;
-  opacity: 0;
-}
+/* Bestiary: fixed search hub and upright categories in an inward semicircle. */
+.revolver-menu { position:absolute; right:calc(10% - 28px); top:-28px; width:56px; height:56px; z-index:50; pointer-events:none; visibility:hidden; }
+.revolver-menu.open { visibility:visible; }
+.revolver-stage { position:absolute; inset:0; pointer-events:none; }
+.search-wrapper { position:absolute; left:4px; top:4px; width:48px; height:48px; border-radius:24px; background:#880909; display:flex; align-items:center; overflow:hidden; pointer-events:none; z-index:3; box-shadow:0 4px 12px #34333320; transition:width .28s ease,left .28s ease; }
+.revolver-menu.ready .search-wrapper { pointer-events:auto; }
+.search-trigger-btn { flex:0 0 48px; height:48px; border:0; background:none; display:grid; place-items:center; cursor:pointer; }
+.search-trigger-btn img { width:27px; height:27px; object-fit:contain; filter:brightness(0) invert(1); }
+.search-wrapper input { min-width:0; width:0; padding:0; opacity:0; border:0; outline:0; background:none; color:#fff; font-size:14px; }
+.search-wrapper input::placeholder { color:#f0e7dacc; }
+.close-search-btn { display:none; flex:0 0 32px; height:44px; border:0; background:none; color:#fff; font-size:20px; cursor:pointer; }
+.search-wrapper.expanded { left:-208px; width:260px; }
+.search-wrapper.expanded input { width:100%; opacity:1; }
+.search-wrapper.expanded .close-search-btn { display:block; }
+.revolver-ring { position:absolute; left:-72px; top:-72px; width:200px; height:200px; border-radius:50%; pointer-events:none; touch-action:none; }
+.revolver-menu.ready:not(.search-active) .revolver-ring { pointer-events:auto; cursor:grab; clip-path:inset(0 38% 0 0); }
+.revolver-ring:active { cursor:grabbing; }
+.revolver-slot { position:absolute; left:100px; top:100px; width:44px; height:44px; border-radius:50%; border:3px solid transparent; padding:8px; background:#343333; display:grid; place-items:center; opacity:0; pointer-events:none; cursor:pointer; transition:border-color .2s ease,background-color .2s ease; box-shadow:0 3px 9px #34333320; }
+.revolver-slot.active { border-color:#880909; }
+.revolver-slot:hover { background:#454343; }
+.revolver-slot img { width:100%; height:100%; object-fit:contain; pointer-events:none; filter:brightness(0) saturate(100%) invert(91%) sepia(8%) saturate(394%) hue-rotate(330deg) brightness(98%) contrast(92%); }
+.revolver-slot:focus-visible,.search-trigger-btn:focus-visible,.close-search-btn:focus-visible { outline:2px solid #880909; outline-offset:3px; }
+.revolver-menu.search-active .revolver-ring { visibility:hidden; pointer-events:none; }
+.bestiary-empty { color:#343333; }
+@media(prefers-reduced-motion:reduce) { .search-wrapper,.revolver-slot { transition:none; } }
 
-.revolver-menu.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* STŘEDOVÁ LUPA */
-.search-wrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 44px;
-  height: 44px;
-  background: #1e293b;
-  border: 2px solid #38bdf8;
-  border-radius: 22px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  z-index: 25;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-              width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              background-color 0.2s;
-  transform: translateY(0);
-}
-
-/* Při otevření Bestiáře vyjede lupa do středu kružnice */
-.revolver-menu.open .search-wrapper {
-  transform: translateY(-85px);
-}
-
-.search-trigger-btn {
-  background: none;
-  border: none;
-  color: #ffffff;
-  font-size: 16px;
-  min-width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.search-wrapper input {
-  width: 0;
-  opacity: 0;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #ffffff;
-  font-size: 13px;
-  transition: width 0.3s ease, opacity 0.2s ease;
-}
-
-.search-wrapper input::placeholder {
-  color: #94a3b8;
-}
-
-.close-search-btn {
-  background: none;
-  border: none;
-  color: #94a3b8;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 0 10px;
-  display: none;
-}
-
-.search-wrapper.expanded {
-  width: 230px;
-  background: #0f172a;
-}
-
-.search-wrapper.expanded input {
-  width: 100%;
-  opacity: 1;
-}
-
-.search-wrapper.expanded .close-search-btn {
-  display: block;
-}
-
-/* OTÁČECÍ PRSTENEC/BUBEN REVOLVERU */
-.revolver-ring {
-  position: absolute;
-  top: -85px; /* Střed totožný s lupou */
-  right: 0;
-  width: 44px;
-  height: 44px;
-  pointer-events: auto;
-  transform-origin: center center;
-  transition: transform 0.15s ease-out;
-  touch-action: none; /* Umožní vlastní plynulá gesta myší/prstem */
-  cursor: grab;
-}
-
-.revolver-ring:active {
-  cursor: grabbing;
-}
-
-/* MENŠÍ SLOTY NA KRUŽNICI HOODU */
-.revolver-slot {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 36px; /* Zmenšený rozměr slotu */
-  height: 36px;
-  border-radius: 50%;
-  background: #1e293b;
-  border: 2px solid #38bdf8;
-  color: #ffffff;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
-  transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
-}
-
-.revolver-slot:hover,
-.revolver-slot.active {
-  background: #0284c7;
-  border-color: #38bdf8;
-}
-
-/* Vnitřní ikona se protáčí zpět, aby nebyly symboly vzhůru nohama */
-.revolver-slot span {
-  display: inline-block;
-  pointer-events: none;
-}
+/* Child visibility must not override the closed menu's hidden state. */
+.revolver-menu:not(.open) { display:none; }

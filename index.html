@@ -72,41 +72,23 @@
   <nav class="mobile-nav">
     
     <!-- REVOLVER MENU KATEGORIÍ (BESTIÁŘ) -->
-    <div id="revolver-menu" class="revolver-menu">
-      
-      <!-- Otáčivý prstenec se sloty v kruhu kolem lupy -->
-      <div id="revolver-ring" class="revolver-ring">
-        <button class="revolver-slot active" onclick="selectSlot('all', this)" title="Vše">
-          <span>🌌</span>
-        </button>
-        <button class="revolver-slot" onclick="selectSlot('dragons', this)" title="Drakonidi">
-          <span>🐉</span>
-        </button>
-        <button class="revolver-slot" onclick="selectSlot('beasts', this)" title="Běsové">
-          <span>🐺</span>
-        </button>
-        <button class="revolver-slot" onclick="selectSlot('undead', this)" title="Nemrtví">
-          <span>💀</span>
-        </button>
-        <button class="revolver-slot" onclick="selectSlot('constructs', this)" title="Magičtí tvorové">
-          <span>⚡</span>
-        </button>
+    <div id="revolver-menu" class="revolver-menu" aria-label="Kategorie bestiáře">
+      <div class="revolver-stage">
+        <div id="revolver-ring" class="revolver-ring" role="group" aria-label="Otáčení kategorií bestiáře">
+          <button class="revolver-slot" data-category="all" title="Vše" aria-label="Vše" type="button"><img src="icons/category-all.png" alt="" draggable="false"></button>
+          <button class="revolver-slot" data-category="dragons" title="Drakonidi" aria-label="Drakonidi" type="button"><img src="icons/dragon.png" alt="" draggable="false"></button>
+          <button class="revolver-slot" data-category="wind" title="Vítr" aria-label="Vítr" type="button"><img src="icons/category-wind.png" alt="" draggable="false"></button>
+          <button class="revolver-slot" data-category="beasts" title="Šelmy" aria-label="Šelmy" type="button"><img src="icons/category-beasts.png" alt="" draggable="false"></button>
+          <button class="revolver-slot" data-category="constructs" title="Konstrukti" aria-label="Konstrukti" type="button"><img src="icons/category-constructs.png" alt="" draggable="false"></button>
+          <button class="revolver-slot" data-category="poison" title="Jed" aria-label="Jed" type="button"><img src="icons/category-poison.png" alt="" draggable="false"></button>
+          <button class="revolver-slot" data-category="undead" title="Nemrtví" aria-label="Nemrtví" type="button"><img src="icons/category-poison.png" alt="" draggable="false"></button>
+        </div>
+        <div id="search-wrapper" class="search-wrapper">
+          <button class="search-trigger-btn" onclick="openSearch()" title="Hledat" aria-label="Hledat v bestiáři" type="button"><img src="icons/search.png" alt="" draggable="false"></button>
+          <input type="text" id="bestiary-search-input" placeholder="Hledat v bestiáři…" aria-label="Hledat v bestiáři" oninput="searchBestiary(this.value)">
+          <button class="close-search-btn" onclick="closeSearch(event)" title="Zavřít vyhledávání" aria-label="Zavřít vyhledávání" type="button">×</button>
+        </div>
       </div>
-
-      <!-- Středová ikona lupy -->
-      <div id="search-wrapper" class="search-wrapper">
-        <button class="search-trigger-btn" onclick="openSearch()" title="Hledat">
-          <span>🔍</span>
-        </button>
-        <input 
-          type="text" 
-          id="bestiary-search-input" 
-          placeholder="Hledat v bestiáři..." 
-          oninput="searchBestiary(this.value)"
-        >
-        <button class="close-search-btn" onclick="closeSearch(event)" title="Zavřít vyhledávání">✕</button>
-      </div>
-
     </div>
 
     <!-- SVG Pozadí tvořící bílou lištu -->

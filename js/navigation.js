@@ -55,18 +55,37 @@ function moveIndicator(index) {
       }
     }
 
-    if (revolverMenu) {
-      if (index === 4) {
-        revolverMenu.classList.add('open');
-      } else {
-        revolverMenu.classList.remove('open');
+    if (revolverMenu && typeof setRevolverOpen === 'function') {
+      const open = index === 4;
+      if (revolverMenu._requestedOpen !== open) {
+        revolverMenu._requestedOpen = open;
+        // Flush the navigation transition so the following phase awaits it.
+        getComputedStyle(indicator).transform;
+        setRevolverOpen(open, indicator.getAnimations());
       }
     }
-    
-    const centers = [38, 114, 190, 266, 342];
+
+    // Use real CSS pixels: a fixed 380-unit SVG drifts away from the icons
+    // when the responsive bar grows or shrinks.
+    const nav = document.querySelector('.mobile-nav');
+    const width = nav.getBoundingClientRect().width;
+    const background = nav.querySelector('.nav-bg');
+    if (width > 0) {
+      background.setAttribute('viewBox', `0 0 ${width} 70`);
+      background.setAttribute('preserveAspectRatio', 'none');
+      background.querySelector('mask').setAttribute('width', width);
+      background.querySelectorAll('rect').forEach(rect => rect.setAttribute('width', width));
+    }
+    const center = (width || 380) * (index + .5) / 5;
     
     if (pathElement) {
-      pathElement.setAttribute('d', generatePath(centers[index]));
+      pathElement.setAttribute('d', generatePath(center));
     }
   }
 }
+
+window.addEventListener('resize', () => {
+  const buttons = [...document.querySelectorAll('.nav-item')];
+  const index = buttons.findIndex(button => button.classList.contains('active'));
+  if (index >= 0) moveIndicator(index);
+});
