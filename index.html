@@ -4,7 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aetheria Worldbuilder</title>
-  <link rel="stylesheet" href="style.css">
+  
+  <!-- Samostatné CSS styly -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/navigation.css">
+  <link rel="stylesheet" href="css/revolver.css">
 </head>
 <body>
 
@@ -31,9 +35,9 @@
       </div>
     </section>
 
-    <section id="lokality" class="tab-content">
-      <h2>Města a Lokality</h2>
-      <div id="cities-list" class="items-grid"></div>
+    <section id="timeline" class="tab-content">
+      <h2>Časová osa</h2>
+      <div id="timeline-list" class="items-grid"></div>
     </section>
 
     <section id="postavy" class="tab-content">
@@ -50,27 +54,67 @@
 
   <!-- Mobilní spodní lišta s přesnou SVG křivkou -->
   <nav class="mobile-nav">
-    <!-- SVG Pozadí tvořící bílou lištu s červenými a modrými oblouky -->
+    
+<!-- REVOLVER MENU KATEGORIÍ (BESTIÁŘ) -->
+<div id="revolver-menu" class="revolver-menu">
+  
+  <!-- Otáčivý prstenec se sloty kolem lupy -->
+  <div id="revolver-ring" class="revolver-ring">
+    <button class="revolver-slot active" onclick="selectSlot('all', this)" title="Vše">
+      <span>🌌</span>
+    </button>
+    <button class="revolver-slot" onclick="selectSlot('dragons', this)" title="Drakonidi">
+      <span>🐉</span>
+    </button>
+    <button class="revolver-slot" onclick="selectSlot('beasts', this)" title="Běsové">
+      <span>🐺</span>
+    </button>
+    <button class="revolver-slot" onclick="selectSlot('undead', this)" title="Nemrtví">
+      <span>💀</span>
+    </button>
+    <button class="revolver-slot" onclick="selectSlot('constructs', this)" title="Magičtí tvorové">
+      <span>⚡</span>
+    </button>
+  </div>
+
+  <!-- Středová lupa -->
+  <div id="search-wrapper" class="search-wrapper">
+    <button class="search-trigger-btn" onclick="openSearch()" title="Hledat">
+      <span>🔍</span>
+    </button>
+    <input 
+      type="text" 
+      id="bestiary-search-input" 
+      placeholder="Hledat v bestiáři..." 
+      oninput="searchBestiary(this.value)"
+    >
+    <button class="close-search-btn" onclick="closeSearch(event)" title="Zavřít vyhledávání">✕</button>
+  </div>
+
+</div>
+
+    <!-- SVG Pozadí tvořící bílou lištu -->
     <svg class="nav-bg" viewBox="0 0 380 70">
       <path id="curve-path" fill="#ffffff" d="" />
     </svg>
 
     <!-- Plovoucí indikátor -->
     <div class="nav-indicator" id="nav-indicator">
-      <div class="active-circle">
+      <div class="active-circle" id="active-circle">
         <img id="active-icon" src="" alt="" class="indicator-icon">
       </div>
     </div>
 
+    <!-- Tlačítka hlavní navigace -->
     <div class="nav-container">
       <button class="nav-item" onclick="switchTab('mapa', this)">
         <img src="icons/adventure.png" alt="Mapa" class="nav-icon">
         <span class="label">Mapa</span>
       </button>
 
-      <button class="nav-item" onclick="switchTab('lokality', this)">
-        <img src="icons/castle.png" alt="Lokality" class="nav-icon">
-        <span class="label">Lokality</span>
+      <button class="nav-item" onclick="switchTab('timeline', this)">
+        <img src="icons/breakdown.png" alt="Časová osa" class="nav-icon">
+        <span class="label">Časová osa</span>
       </button>
 
       <button class="nav-item active" onclick="switchTab('cteni', this)">
@@ -90,6 +134,10 @@
     </div>
   </nav>
 
-  <script src="script.js"></script>
+  <!-- Samostatné JS moduly -->
+  <script src="js/data.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/bestiary.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
