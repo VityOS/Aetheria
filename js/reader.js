@@ -2,7 +2,7 @@
   let focused = false, generation = 0, lastActivity = performance.now(), previousTick = performance.now();
   let writing = false, storageOK = true, saveTimer;
   const read = (key,fallback) => {try{return localStorage.getItem(key) ?? fallback;}catch{return fallback;}};
-  const save = (key,value) => {try{localStorage.setItem(key,String(value));return true;}catch{storageOK=false;return false;}};
+  const save = (key,value) => {try{localStorage.setItem(key,String(value));if(key==='aetheria.reader.draft'||key==='aetheria.reader.chapters'||key.startsWith('aetheria.reader.chapter.')||key.startsWith('aetheria.reader.meta.'))document.dispatchEvent(new Event('aetheria:readerchange'));return true;}catch{storageOK=false;return false;}};
   let seconds = Number(read('aetheria.reader.seconds','0')) || 0;
   const motion = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1;
   const svg = body => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">${body}</svg>`;
@@ -76,6 +76,7 @@
       });
       chapterPanel.append(button);
     });
+    window.AetheriaReaderBackups?.mount(chapterPanel);
     chapterPanel.hidden=false;alignChapters();
     dock.querySelector('.reader-chapters').setAttribute('aria-expanded','true');
     chapterPanel.querySelector('button[aria-current=true]')?.focus({preventScroll:true});
@@ -186,6 +187,15 @@
     const firstChapter=chapterData()[0];currentChapter=String(firstChapter.id ?? 0);
     article.textContent=read(draftKey(),firstChapter.text ?? firstChapter.content ?? '');
     loadChapterInfo(firstChapter);
+    window.AetheriaReaderBackups?.register(()=>chapterData().map((chapter,index)=>{
+      const id=String(chapter.id ?? index),info=chapterInfo(chapter,index);
+      return {
+        id,title:id===currentChapter?chapterTitle.textContent:info.title,
+        description:id===currentChapter?caption.textContent:info.description,
+        text:id===currentChapter?article.innerText:read(id==='intro'?'aetheria.reader.draft':`aetheria.reader.chapter.${id}`,chapter.text ?? chapter.content ?? '')
+      };
+    }));
+    document.addEventListener('aetheria:backupstatus',event=>{if(event.detail.error)saveStatus.textContent=event.detail.text;});
     article.contentEditable='false';
     dock=document.createElement('div');dock.className='reader-dock';dock.hidden=true;dock.setAttribute('role','group');dock.setAttribute('aria-label','Ovládání čtení');
     dock.innerHTML=`<button class="reader-tool reader-timer" data-reveal title="Vynulovat čas aktivity">${clock}<span>0:00</span></button><div class="reader-tool reader-mode" data-reveal role="group" aria-label="Režim textu"><button data-write="false" aria-pressed="true">Číst</button><button data-write="true" aria-pressed="false">Psát</button></div><button class="reader-tool reader-chapters" data-reveal aria-label="Kapitoly" aria-expanded="false" aria-controls="reader-chapter-panel" title="Kapitoly">${svg('<path d="M8 5h13M8 12h13M8 19h13"/><circle cx="3" cy="5" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="19" r="1"/>')}</button><button class="reader-tool reader-theme" data-reveal aria-label="Zapnout tmavý režim" aria-pressed="false">${sun}</button><button class="reader-tool reader-home" aria-label="Zobrazit hlavní navigaci" title="Zobrazit hlavní navigaci"><img src="icons/open-book.png" alt=""></button>`;

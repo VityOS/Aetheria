@@ -76,3 +76,8 @@ body.reader-focused .reader-dock:not([inert]) .reader-home::before { opacity:1; 
 .reader-caption[contenteditable="plaintext-only"]:empty::before { content:'Krátký popis kapitoly'; color:#827d77; }
 .reader-save-status { font-size:12px; color:#827d77; }
 .reader-save-status:empty { display:none; }
+
+.reader-backups { margin-top:14px; padding-top:14px; border-top:1px solid #827d7766; }
+.reader-backups .reader-chapters-title { margin-bottom:6px; }
+.reader-backup-note { margin:8px 10px 0; font-size:11px; line-height:1.5; color:#c1b8ae; }
+.reader-backups button:disabled { opacity:.4; cursor:default; }

@@ -1,0 +1,13 @@
+AETHERIA – ZÁLOHY KAPITOL
+
+V aplikaci otevři Kapitoly a zvol Připojit složku záloh.
+Vyber tuto složku Zalohy. Připojení je potřeba zopakovat po novém otevření aplikace.
+Po připojení se každá kapitola uloží do samostatného textového souboru po krátké pauze v psaní.
+Tlačítko Zálohovat teď provede zápis ihned.
+Historie obsahuje starší verze před přepsáním – nejvýše jednu kopii kapitoly za hodinu.
+Soubor aetheria-zaloha.json obsahuje všechny kapitoly včetně názvů a popisů.
+
+Na telefonu nebo bez přístupu ke složce použij Stáhnout ZIP a soubor ulož.
+Zálohy nejsou synchronizace mezi telefonem a počítačem.
+Před zavřením aplikace zkontroluj potvrzení Zálohováno.
+Pro nouzovou obnovu můžeš text z libovolného TXT vložit zpět do režimu Psát.
