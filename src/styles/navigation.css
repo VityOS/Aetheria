@@ -1,19 +1,19 @@
 /* Knihovna má stálou paletu, čtečka si pamatuje vlastní režim. */
 .reader[data-view=library], .library-dialog {
-  --paper: #f0e7da; --surface: #f7efe3; --sand: #d2b48c; --ink: #121824; --muted: #7b6d5d; --line: #dbcdb9;
+  --paper: #f0e7da; --surface: #f7efe3; --sand: #d2b48c; --ink: #343333; --muted: #7b6d5d; --line: #dbcdb9;
   color-scheme: light;
 }
 html:has(.reader[data-view=library]), html:has(.reader[data-view=library]) body { background: #f0e7da; color-scheme: light; }
 .book-widgets { border: 1px solid #880909; }
 .book-card[hidden] { display: none; }
 .library-empty { margin: 0 30px; font-size: 13px; color: var(--muted); line-height: 1.7; }
-.bottom-navigation { position: absolute; z-index: 4; height: 44px; width: 44px; border-radius: 999px; background: #121824; overflow: hidden; box-shadow: 0 8px 24px #12182420; }
+.bottom-navigation { position: absolute; z-index: 4; height: 44px; width: 44px; border-radius: 999px; background: #343333; overflow: hidden; box-shadow: 0 8px 24px #34333320; }
 .bottom-navigation[hidden] { display: none; }
 .bottom-navigation-items { display: flex; align-items: center; justify-content: space-evenly; height: 44px; padding-left: 48px; min-width: 275px; width: 100%; opacity: 0; transition: opacity .2s; }
-.bottom-navigation button { display: grid; place-items: center; width: 44px; height: 44px; padding: 10px; border-radius: 50%; background: none; color: white; flex-shrink: 0; }
-.bottom-navigation button[aria-current=page] { background: #ffffff22; }
-.bottom-navigation button:hover { background: #ffffff18; }
+.bottom-navigation button { display: grid; place-items: center; width: 44px; height: 44px; padding: 7px; border: 3px solid transparent; border-radius: 50%; background: none; color: #f0e7da; flex-shrink: 0; transition: border-color .2s ease, background-color .2s ease; }
+.bottom-navigation button[aria-current=page] { border-color: #880909; background: #343333; }
+.bottom-navigation button:hover { background: #454343; }
 .bottom-navigation button:focus-visible { outline: 2px solid #d2b48c; outline-offset: -4px; }
-.bottom-navigation svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.reader[data-view=library] .toolbar .back { background: #121824; color: white; width: 44px; height: 44px; }
+.bottom-navigation button > svg, .bottom-navigation .navigation-circle > svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.reader[data-view=library] .toolbar .back { background: #343333; color: white; width: 44px; height: 44px; }
 @media(prefers-reduced-motion:reduce) { .bottom-navigation-items { transition: none; } }

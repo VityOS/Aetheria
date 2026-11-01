@@ -1,0 +1,18 @@
+/* Principy v1.0: zaoblená lišta, společný plovoucí indikátor a plynulý SVG výřez. */
+.bottom-navigation { height: 70px; border-radius: 0; background: transparent; overflow: visible; box-shadow: none; isolation: isolate; filter: drop-shadow(0 10px 20px #34333320); }
+.bottom-navigation::before { display: none; }
+.bottom-navigation > .navigation-background { position: absolute; inset: 0; width: 100%; height: 70px; pointer-events: none; z-index: 0; fill: none; stroke: none; }
+.bottom-navigation-items { position: relative; z-index: 1; padding: 0; opacity: 1; height: 70px; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; }
+.bottom-navigation button { position: relative; width: 100%; height: 70px; margin: 0; padding: 12px 0 22px; border: 0; border-radius: 0; background: none; color: #f0e7da; display: flex; align-items: center; justify-content: center; flex-direction: column; transform: none; }
+.bottom-navigation button:hover, .bottom-navigation button[aria-current=page], .bottom-navigation button[aria-current=page]:hover { background: none; border: 0; transform: none; }
+.bottom-navigation button > svg { width: 22px; height: 22px; transition: opacity .2s ease, transform .35s ease; }
+.bottom-navigation button[aria-current=page] > svg { opacity: 0; transform: translateY(-28px); }
+.nav-label, .bottom-navigation button[aria-current=page] .nav-label { position: absolute; top: auto; bottom: 13px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 10px; font-weight: 500; line-height: 1; letter-spacing: .1px; }
+.bottom-navigation button[aria-current=page] .nav-label { color: #f9f7f3; font-weight: 700; }
+.navigation-indicator { position: absolute; top: -28px; left: 0; width: 56px; height: 56px; pointer-events: none; z-index: 2; }
+.navigation-circle { width: 56px; height: 56px; border: 3px solid #880909; border-radius: 50%; background: #343333; color: #f9f7f3; display: grid; place-items: center; box-shadow: 0 5px 14px #34333324; }
+.navigation-circle svg { width: 24px; height: 24px; }
+.bottom-navigation[data-landing=true] .navigation-indicator { visibility: hidden; }
+.bottom-navigation[data-landing=true] button[aria-current=page] { visibility: visible; }
+.library, .world-section { bottom: calc(136px + env(safe-area-inset-bottom, 0px)); }
+@media(prefers-reduced-motion:reduce) { .bottom-navigation button > svg { transition: none; } }

@@ -1,3 +1,4 @@
+import { initWorldSections } from '../world/sections.js';
 import { createBottomNavigation } from '../../ui/bottom-navigation.js';
 export function initLibrary(catalog, reader, storage) {
   const root = document.querySelector('.reader');
@@ -10,32 +11,22 @@ export function initLibrary(catalog, reader, storage) {
   let busy = false;
   let selected = catalog.find(b => b.id === storage.get('selected-book')) || catalog[0];
   root.dataset.view = 'reader';
-  let filter = 'all';
-  const searchDialog = document.getElementById('librarySearchDialog');
-  const searchInput = document.getElementById('librarySearch');
-  const normalize = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('cs');
-  function filterCards() {
-    const query = normalize(searchInput.value.trim());
-    let count = 0;
-    for (const card of shelf.children) {
-      const book = catalog.find(book => book.id === card.dataset.book);
-      const saved = storage.get(book.id === 'aetheria' ? 'bookmark' : 'bookmark-' + book.id) === 'true';
-      card.hidden = !(filter !== 'saved' || saved) || !normalize(book.title).includes(query);
-      if (!card.hidden) count++;
-    }
-    document.getElementById('libraryEmpty').hidden = count !== 0;
-    document.getElementById('libraryCounter').textContent = count ? '01 / ' + String(count).padStart(2, '0') : '00 / 00';
-    shelf.scrollLeft = 0;
+  const sections = initWorldSections(root, navigate);
+  function navigate(section) {
+    if (busy) return;
+    root.dataset.section = section;
+    library.hidden = section !== 'library';
+    library.inert = section !== 'library';
+    sections.show(section);
+    navigation.select(section);
   }
   const navigation = createBottomNavigation({ container: root, anchor: back, reducedMotion: reduced, items: [
-    { id: 'library', label: 'Knihovna', onSelect() { filter = 'all'; searchInput.value = ''; filterCards(); navigation.select('library'); } },
-    { id: 'search', label: 'Hledat knihu', onSelect() { searchDialog.showModal(); } },
-    { id: 'bookmarks', label: 'Knihy se záložkou', onSelect() { filter = 'saved'; searchInput.value = ''; filterCards(); navigation.select('bookmarks'); } },
-    { id: 'reading', label: 'Pokračovat ve čtení', onSelect() { openBook(selected); } },
+    { id: 'home', label: 'Domovská stránka', onSelect() { navigate('home'); } },
+    { id: 'library', label: 'Knihovna', onSelect() { navigate('library'); } },
+    { id: 'chronicle', label: 'Kronika / Bestiář', onSelect() { navigate('chronicle'); } },
+    { id: 'map', label: 'Mapa světa', onSelect() { navigate('map'); } },
   ] });
   navigation.select('library');
-  document.getElementById('librarySearchForm').addEventListener('submit', event => { event.preventDefault(); filter = 'all'; filterCards(); navigation.select('search'); searchDialog.close(); });
-  document.getElementById('librarySearchCancel').addEventListener('click', () => searchDialog.close());
   async function animate(node, frames, duration, delay = 0) {
     const animation = node.animate(frames, { duration: reduced.matches ? 1 : duration, delay: reduced.matches ? 0 : delay, fill: 'forwards', easing: 'cubic-bezier(.22,.8,.25,1)' });
     await animation.finished;
@@ -48,13 +39,6 @@ export function initLibrary(catalog, reader, storage) {
     return controls.map(button => origin.left - button.getBoundingClientRect().left);
   }
   function setControlsInert(value) { controls.forEach(button => button.inert = value); }
-  function dockDrop() {
-    const bottom = Math.max(24, parseFloat(getComputedStyle(root).paddingBottom) + 16);
-    return root.clientHeight - bottom - 44 - (document.querySelector('.toolbar').offsetTop + back.offsetTop);
-  }
-  new ResizeObserver(() => {
-    if (root.dataset.view === 'library' && !busy) back.style.transform = 'translateY(' + dockDrop() + 'px) rotate(-90deg)';
-  }).observe(root);
   async function showLibrary() {
     if (busy || root.dataset.view === 'library') return;
     busy = true; back.disabled = true; reader.savePosition(); reader.closePanels();
@@ -65,27 +49,50 @@ export function initLibrary(catalog, reader, storage) {
       ...controls.map((button, i) => animate(button, [{ transform: 'translateX(0) scale(1)', opacity: 1 }, { transform: 'translateX(' + distances[i] + 'px) scale(.2)', opacity: 0 }], 300, (controls.length - 1 - i) * 65)),
     ]);
     controls.forEach(button => button.style.visibility = 'hidden');
-    const drop = dockDrop();
-    await animate(back, [{ transform: 'translateY(0)' }, { transform: 'translateY(' + drop + 'px) rotate(-90deg)' }], 450);
+
+    root.dataset.section = 'library'; sections.show('library'); navigation.select('library');
     library.hidden = false; library.inert = false;
     root.dataset.view = 'library';
-    await animate(library, [{ transform: 'translateX(70px)', opacity: 0 }, { transform: 'translateX(0)', opacity: 1 }], 450);
+    navigation.setLanding(true);
+    await Promise.all([
+      navigation.show(),
+      animate(library, [{ transform: 'translateX(70px)', opacity: 0 }, { transform: 'translateX(0)', opacity: 1 }], 450),
+    ]);
+    const landing = navigation.landingTransform();
+    await animate(back, [
+      { transform: 'translate(0, 0)', offset: 0 },
+      { transform: landing + ' scale(.92, 1.08)', offset: .83 },
+      { transform: landing + ' scale(1.1, .9)', offset: .93 },
+      { transform: landing + ' scale(1)', offset: 1 },
+    ], 560);
+    back.style.visibility = 'hidden'; back.inert = true;
+    navigation.setLanding(false);
     shelf.querySelector('[data-book="' + selected.id + '"]').focus({ preventScroll: true });
-    await navigation.show();
     back.disabled = false; busy = false;
   }
   async function openBook(book) {
     if (busy || root.dataset.view !== 'library') return;
     busy = true; back.disabled = true; library.inert = true;
     selected = book;
-    await navigation.hide();
-    await animate(library, [{ transform: 'translateX(0)', opacity: 1 }, { transform: 'translateX(70px)', opacity: 0 }], 350);
+    navigation.setLanding(true);
+    back.style.transform = navigation.landingTransform();
+    back.style.visibility = 'visible'; back.inert = false;
+    const takeoff = back.style.transform;
+    await Promise.all([
+      navigation.hide(),
+      animate(back, [
+        { transform: takeoff + ' scale(1.1, .9)', offset: 0 },
+        { transform: takeoff + ' scale(.9, 1.12)', offset: .12 },
+        { transform: 'translate(0, -8px) scale(1)', offset: .88 },
+        { transform: 'translate(0, 0) scale(1)', offset: 1 },
+      ], 560),
+      animate(library, [{ transform: 'translateX(0)', opacity: 1 }, { transform: 'translateX(70px)', opacity: 0 }], 350),
+    ]);
     library.hidden = true;
     reader.openBook(book); storage.set('selected-book', book.id);
     root.dataset.view = 'returning';
     controls.forEach(button => button.style.visibility = 'visible');
-    const current = back.style.transform;
-    await animate(back, [{ transform: current }, { transform: 'translateY(0) rotate(0)' }], 450);
+
     await Promise.all([
       animate(content, [{ opacity: 0 }, { opacity: 1 }], 350),
       ...controls.map((button, i) => animate(button, [{ transform: button.style.transform, opacity: 0 }, { transform: 'translateX(0) scale(1)', opacity: 1 }], 300, i * 65)),
@@ -128,5 +135,5 @@ export function initLibrary(catalog, reader, storage) {
     if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
     event.preventDefault(); shelf.scrollBy({ left: (event.key === 'ArrowRight' ? 1 : -1) * shelf.clientWidth * .8, behavior: reduced.matches ? 'instant' : 'smooth' });
   });
-  back.addEventListener('click', () => root.dataset.view === 'library' ? (!busy && navigation.toggle()) : showLibrary());
+  back.addEventListener('click', () => root.dataset.view === 'reader' && showLibrary());
 }

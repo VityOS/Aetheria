@@ -1,0 +1,13 @@
+.world-section { position: absolute; inset: max(28px, env(safe-area-inset-top)) 24px calc(104px + env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; color: var(--ink); }
+.world-section[hidden] { display: none; }
+.world-section h1 { font: 400 clamp(30px, 8vw, 42px)/1.15 Georgia, serif; letter-spacing: -1px; margin: 0 0 18px; }
+.world-section header > p:last-child { font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 28px; }
+.world-link { display: block; width: 100%; padding: 22px 18px; margin: 12px 0; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); text-align: left; font-size: 14px; color: var(--ink); }
+.world-link:hover { border-color: #880909; }
+.world-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.world-tab { min-height: 44px; padding: 10px 15px; border-radius: 24px; background: var(--paper); color: var(--muted); border: 1px solid var(--line); }
+.world-tab[aria-pressed=true] { background: #343333; border-color: #343333; color: white; }
+.world-empty { margin-top: 28px; line-height: 1.8; font-size: 13px; color: var(--muted); }
+.world-map-placeholder { min-height: 240px; border: 1px dashed #b49c7e; border-radius: 18px; padding: 30px 24px; display: flex; flex-direction: column; justify-content: center; background: repeating-linear-gradient(0deg, transparent, transparent 31px, #d2b48c22 32px), repeating-linear-gradient(90deg, transparent, transparent 31px, #d2b48c22 32px); }
+.world-map-placeholder strong { font: 400 24px/1.4 Georgia, serif; }
+.world-map-placeholder p { font-size: 12px; line-height: 1.8; color: var(--muted); }
