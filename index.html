@@ -1,152 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aetheria Worldbuilder</title>
-  
-  <!-- Samostatné CSS styly -->
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/navigation.css">
-  <link rel="stylesheet" href="css/revolver.css">
-  <link rel="stylesheet" href="css/timeline.css">
-  <link rel="stylesheet" href="css/reader.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aetheria — Čtečka</title>
+<link rel="stylesheet" href="./src/styles/main.css">
 </head>
 <body>
-
-  <!-- Horní lišta s názvem -->
-  <header class="app-header">
-    <h1>Aetheria</h1>
-  </header>
-
-  <!-- Hlavní obsahový prostor -->
-  <main id="app-content" class="content-container">
-    
-    <section id="cteni" class="tab-content active">
-      <h2>Příběh & Čtení</h2>
-      <div class="card">
-        <h3>Vítejte v Aetherii</h3>
-        <p>Zde můžete číst příběhy, záznamy ze světa a hlavní lore.</p>
-      </div>
-    </section>
-
-    <section id="mapa" class="tab-content">
-      <h2>Mapa Světa</h2>
-      <div class="card map-placeholder">
-        <p>🗺️ [Zde bude interaktivní mapa Aetherie]</p>
-      </div>
-    </section>
-
-    <!-- ČASOVÁ OSA - NEKONEČNÉ PLÁTNO A PROPORCIONÁLNÍ MĚŘÍTKO -->
-    <section id="timeline" class="tab-content">
-      <h2>Časová osa světa</h2>
-  
-        <div class="timeline-container">
-          <!-- Zakřivený indikátor uprostřed -->
-          <div class="timeline-center-marker" title="Aktivní bod"></div>
-
-          <!-- Levý panel s osou a roky -->
-          <div class="timeline-axis-pane" id="timeline-axis-pane">
-            <div class="timeline-axis-content" id="timeline-axis-content"></div>
-          </div>
-
-        <!-- Pravý panel s kartami událostí -->
-        <div class="timeline-stream-pane" id="timeline-stream-pane">
-          <div class="timeline-stream-content" id="timeline-stream-content"></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="postavy" class="tab-content">
-      <h2>Postavy</h2>
-      <div id="characters-list" class="items-grid"></div>
-    </section>
-
-    <section id="bestiar" class="tab-content">
-      <h2>Bestiář</h2>
-      <div id="bestiary-list" class="items-grid"></div>
-    </section>
-
-  </main>
-
-  <!-- Mobilní spodní lišta s přesnou SVG křivkou -->
-  <nav class="mobile-nav">
-    
-    <!-- REVOLVER MENU KATEGORIÍ (BESTIÁŘ) -->
-    <div id="revolver-menu" class="revolver-menu" aria-label="Kategorie bestiáře">
-      <div class="revolver-stage">
-        <div id="revolver-ring" class="revolver-ring" role="group" aria-label="Otáčení kategorií bestiáře">
-          <button class="revolver-slot" data-category="all" title="Vše" aria-label="Vše" type="button"><img src="icons/category-all.png" alt="" draggable="false"></button>
-          <button class="revolver-slot" data-category="dragons" title="Drakonidi" aria-label="Drakonidi" type="button"><img src="icons/dragon.png" alt="" draggable="false"></button>
-          <button class="revolver-slot" data-category="wind" title="Vítr" aria-label="Vítr" type="button"><img src="icons/category-wind.png" alt="" draggable="false"></button>
-          <button class="revolver-slot" data-category="beasts" title="Šelmy" aria-label="Šelmy" type="button"><img src="icons/category-beasts.png" alt="" draggable="false"></button>
-          <button class="revolver-slot" data-category="constructs" title="Konstrukti" aria-label="Konstrukti" type="button"><img src="icons/category-constructs.png" alt="" draggable="false"></button>
-          <button class="revolver-slot" data-category="poison" title="Jed" aria-label="Jed" type="button"><img src="icons/category-poison.png" alt="" draggable="false"></button>
-          <button class="revolver-slot" data-category="undead" title="Nemrtví" aria-label="Nemrtví" type="button"><img src="icons/category-poison.png" alt="" draggable="false"></button>
-        </div>
-        <button class="revolver-dismiss" type="button" title="Skrýt revolver" aria-label="Skrýt revolver" onclick="dismissRevolver()">×</button>
-        <div id="search-wrapper" class="search-wrapper">
-          <button class="search-trigger-btn" onclick="openSearch()" title="Hledat" aria-label="Hledat v bestiáři" type="button"><img src="icons/search.png" alt="" draggable="false"></button>
-          <input type="text" id="bestiary-search-input" placeholder="Hledat v bestiáři…" aria-label="Hledat v bestiáři" oninput="searchBestiary(this.value)">
-          <button class="close-search-btn" onclick="closeSearch(event)" title="Zavřít vyhledávání" aria-label="Zavřít vyhledávání" type="button">×</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SVG Pozadí tvořící bílou lištu -->
-    <svg class="nav-bg" viewBox="0 0 380 70">
-      <defs>
-        <mask id="nav-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="380" height="70" style="mask-type: luminance;">
-          <rect width="380" height="70" fill="white" />
-          <path id="curve-path" style="fill: black;" d="" />
-        </mask>
-      </defs>
-      <rect width="380" height="70" rx="35" fill="#343333" mask="url(#nav-cutout)" />
-    </svg>
-
-    <!-- Plovoucí indikátor -->
-    <div class="nav-indicator" id="nav-indicator">
-      <div class="active-circle" id="active-circle">
-        <img id="active-icon" src="" alt="" class="indicator-icon">
-      </div>
-    </div>
-
-    <!-- Tlačítka hlavní navigace -->
-    <div class="nav-container">
-      <button class="nav-item" onclick="switchTab('mapa', this)">
-        <img src="icons/adventure.png" alt="Mapa" class="nav-icon">
-        <span class="label">Mapa</span>
-      </button>
-
-      <button class="nav-item" onclick="switchTab('timeline', this)">
-        <img src="icons/breakdown.png" alt="Časová osa" class="nav-icon">
-        <span class="label">Časová osa</span>
-      </button>
-
-      <button class="nav-item active" onclick="switchTab('cteni', this)">
-        <img src="icons/open-book.png" alt="Čtení" class="nav-icon">
-        <span class="label">Čtení</span>
-      </button>
-
-      <button class="nav-item" onclick="switchTab('postavy', this)">
-        <img src="icons/wizard.png" alt="Postavy" class="nav-icon">
-        <span class="label">Postavy</span>
-      </button>
-
-      <button class="nav-item" onclick="switchTab('bestiar', this)">
-        <img src="icons/dragon.png" alt="Bestiář" class="nav-icon">
-        <span class="label">Bestiář</span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Samostatné JS moduly -->
-  <script src="js/data.js"></script>
-  <script src="js/navigation.js"></script>
-  <script src="js/bestiary.js"></script>
-  <script src="js/timeline.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/reader-backups.js"></script>
-  <script src="js/reader.js"></script>
+<main class="reader" aria-label="Čtečka knihy">
+<nav class="toolbar" aria-label="Ovládání čtečky">
+<button class="back" title="Otevřít knihovnu" aria-label="Otevřít knihovnu" id="back">
+<svg viewBox="0 0 24 24">
+<path d="M19 12H5m6-6-6 6 6 6"/>
+</svg>
+</button>
+<button id="contents" aria-label="Obsah kapitol" aria-expanded="false" title="Obsah">
+<svg viewBox="0 0 24 24">
+<path d="M9 6h12M9 12h12M9 18h12M3 6h1M3 12h1M3 18h1"/>
+</svg>
+</button>
+<button id="appearance" aria-label="Nastavení textu" aria-expanded="false" title="Nastavení textu">Aa</button>
+<button id="theme" aria-label="Přepnout na tmavý režim" aria-pressed="false" title="Přepnout na tmavý režim">
+<svg viewBox="0 0 24 24">
+<path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>
+</svg>
+</button>
+<button id="bookmark" aria-label="Přidat záložku" aria-pressed="false" title="Záložka">
+<svg viewBox="0 0 24 24">
+<path d="M6 4h12v17l-6-4-6 4z"/>
+</svg>
+</button>
+<button id="write" aria-label="Režim psaní" title="Režim psaní"><svg viewBox="0 0 24 24"><path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14z"/></svg></button>
+</nav>
+<section class="panel contents" id="contentsPanel" hidden>
+<h2>Obsah knihy</h2>
+<div id="chapterList">
+</div>
+</section>
+<section class="panel" id="appearancePanel" hidden>
+<h2>Nastavení čtení</h2>
+<div class="setting">
+<span>Velikost písma</span>
+<div>
+<button id="smaller" aria-label="Zmenšit písmo">A−</button>
+<button id="larger" aria-label="Zvětšit písmo">A+</button>
+</div>
+</div>
+</section>
+<div class="reading-content" id="readingContent">
+<p class="chapter" id="chapter">
+</p>
+<h1 class="title" id="title">
+</h1>
+<article class="prose" id="prose" aria-label="Text knihy" tabindex="0">
+</article>
+<footer class="footer">
+<div class="pagination">
+<button id="previous" aria-label="Předchozí kapitola">‹</button>
+<span class="counter" id="counter" aria-live="polite">
+</span>
+<button id="next" aria-label="Další kapitola">›</button>
+</div>
+<progress class="progress" id="progress" max="100" value="0" aria-label="Průběh kapitoly"></progress>
+<p class="book">Aetheria · Město nad oblaky</p>
+</footer>
+</div>
+<section class="library" id="library" aria-label="Knihovna" inert hidden><header><p class="eyebrow">VAŠE PŘÍBĚHY NA DOSAH</p><h1>Knihovna<span>.</span></h1><p>Každá kniha je začátek jiné cesty.</p></header><div class="bookshelf" id="bookshelf" tabindex="0" aria-label="Knihy — posouvejte do stran"></div><p class="library-empty" id="libraryEmpty" hidden>Žádné knihy. Zkuste knihovnu nebo jiné hledání.</p><div class="library-bottom"><span id="libraryCounter">01 / 03</span><span>← Posouvejte knihy →</span></div></section>
+</main>
+<div class="toast" id="toast" role="status">
+</div>
+<dialog id="librarySearchDialog" class="dialog library-dialog"><form id="librarySearchForm"><h2>Najít knihu</h2><label for="librarySearch">Název knihy</label><input id="librarySearch" type="search" placeholder="Hledat v knihovně…"><div class="actions"><button type="button" id="librarySearchCancel">Zrušit</button><button type="submit">Hledat</button></div></form></dialog>
+<dialog id="unlockDialog" class="dialog">
+<form id="unlockForm">
+<h2>Režim psaní</h2><p>Pro úpravu kapitoly zadejte heslo.</p>
+<label for="password">Heslo</label><input id="password" type="password" autocomplete="current-password" required>
+<p id="passwordError" class="error" role="alert"></p>
+<div class="actions"><button type="button" id="unlockCancel">Zrušit</button><button type="submit">Odemknout</button></div>
+</form></dialog>
+<dialog id="editorDialog" class="dialog editor-dialog">
+<form id="editorForm">
+<h2>Psát kapitolu</h2>
+<label for="editTitle">Název kapitoly</label><input id="editTitle" required maxlength="200">
+<label for="editText">Text kapitoly</label><textarea id="editText" required spellcheck="true" placeholder="Pište příběh…"></textarea>
+<p class="editor-note">Odstavce oddělte prázdným řádkem. Ukládá se pouze v tomto prohlížeči.</p>
+<p id="saveError" class="error" role="alert"></p>
+<div class="actions"><button type="button" id="editCancel">Zrušit</button><button type="submit">Uložit kapitolu</button></div>
+</form></dialog>
+<script type="module" src="./src/app.js">
+</script>
 </body>
 </html>

@@ -1,0 +1,63 @@
+html {
+  color-scheme:light
+}
+
+html[data-theme="dark"] {
+  color-scheme:dark;
+  color:#e6dfe9;
+  background:#17151a
+}
+
+html[data-theme="dark"] body {
+  background:radial-gradient(ellipse at center,#252129 0,#17151a 75%)
+}
+
+html[data-theme="dark"] .reader {
+  background:#252129;
+  border-color:#39323e;
+  box-shadow:2px 3px 8px #0006
+}
+
+html[data-theme="dark"] .toolbar button {
+  background:#36303b
+}
+
+html[data-theme="dark"] .toolbar button:hover {
+  background:#49404f
+}
+
+html[data-theme="dark"] .toolbar .back {
+  background:#e6dfe9;
+  color:#252129
+}
+
+html[data-theme="dark"] .toolbar .active {
+  background:#594763
+}
+
+html[data-theme="dark"] .prose {
+  color:#c1b7c7;
+  scrollbar-color:#55495e transparent
+}
+
+html[data-theme="dark"] .progress {
+  accent-color:#d3c3de
+}
+
+html[data-theme="dark"] .book,html[data-theme="dark"] .pagination button {
+  color:#a99bb3
+}
+
+html[data-theme="dark"] .panel {
+  background:#2c2632;
+  border-color:#493e51
+}
+
+html[data-theme="dark"] .panel button {
+  background:#3a3142
+}
+
+html[data-theme="dark"] .toast {
+  background:#e6dfe9;
+  color:#252129
+}
