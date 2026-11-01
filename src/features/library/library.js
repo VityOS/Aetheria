@@ -39,13 +39,22 @@ export function initLibrary(catalog, reader, storage) {
   async function animate(node, frames, duration, delay = 0) {
     const animation = node.animate(frames, { duration: reduced.matches ? 1 : duration, delay: reduced.matches ? 0 : delay, fill: 'forwards', easing: 'cubic-bezier(.22,.8,.25,1)' });
     await animation.finished;
-    animation.commitStyles(); animation.cancel();
+    const final = frames[frames.length - 1];
+    for (const [property, value] of Object.entries(final)) node.style[property] = value;
+    animation.cancel();
   }
   function offsets() {
     const origin = back.getBoundingClientRect();
     return controls.map(button => origin.left - button.getBoundingClientRect().left);
   }
   function setControlsInert(value) { controls.forEach(button => button.inert = value); }
+  function dockDrop() {
+    const bottom = Math.max(24, parseFloat(getComputedStyle(root).paddingBottom) + 16);
+    return root.clientHeight - bottom - 44 - (document.querySelector('.toolbar').offsetTop + back.offsetTop);
+  }
+  new ResizeObserver(() => {
+    if (root.dataset.view === 'library' && !busy) back.style.transform = 'translateY(' + dockDrop() + 'px) rotate(-90deg)';
+  }).observe(root);
   async function showLibrary() {
     if (busy || root.dataset.view === 'library') return;
     busy = true; back.disabled = true; reader.savePosition(); reader.closePanels();
@@ -55,7 +64,8 @@ export function initLibrary(catalog, reader, storage) {
       animate(content, [{ opacity: 1 }, { opacity: 0 }], 250),
       ...controls.map((button, i) => animate(button, [{ transform: 'translateX(0) scale(1)', opacity: 1 }, { transform: 'translateX(' + distances[i] + 'px) scale(.2)', opacity: 0 }], 300, (controls.length - 1 - i) * 65)),
     ]);
-    const drop = root.clientHeight - 100 - (back.getBoundingClientRect().top - root.getBoundingClientRect().top);
+    controls.forEach(button => button.style.visibility = 'hidden');
+    const drop = dockDrop();
     await animate(back, [{ transform: 'translateY(0)' }, { transform: 'translateY(' + drop + 'px) rotate(-90deg)' }], 450);
     library.hidden = false; library.inert = false;
     root.dataset.view = 'library';
@@ -72,6 +82,8 @@ export function initLibrary(catalog, reader, storage) {
     await animate(library, [{ transform: 'translateX(0)', opacity: 1 }, { transform: 'translateX(70px)', opacity: 0 }], 350);
     library.hidden = true;
     reader.openBook(book); storage.set('selected-book', book.id);
+    root.dataset.view = 'returning';
+    controls.forEach(button => button.style.visibility = 'visible');
     const current = back.style.transform;
     await animate(back, [{ transform: current }, { transform: 'translateY(0) rotate(0)' }], 450);
     await Promise.all([
@@ -88,11 +100,20 @@ export function initLibrary(catalog, reader, storage) {
     card.dataset.book = book.id; card.setAttribute('aria-label', 'Číst: ' + book.title);
     const cover = document.createElement('span'); cover.className = 'cover'; cover.style.setProperty('--cover', book.cover.color);
     for (const [className, text] of [['cover-series', 'AETHERIA / ' + String(i + 1).padStart(2, '0')], ['cover-symbol', book.cover.symbol], ['cover-title', book.cover.label], ['cover-subtitle', book.cover.subtitle]]) {
-      const span = document.createElement('span'); span.className = className; span.textContent = text; cover.append(span);
+      const span = document.createElement('span'); span.className = className; span.textContent = text;
+      if (className === 'cover-symbol') {
+        const shapes = [
+          '<path d="m50 12 38 38-38 38-38-38z"/><path d="m50 30 20 20-20 20-20-20z"/>',
+          '<path d="M50 12v76M12 50h76M23 23l54 54M23 77l54-54"/>',
+          '<path d="M68 15a38 38 0 1 0 17 61A39 39 0 0 1 68 15Z"/>',
+        ];
+        span.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true">' + shapes[i % shapes.length] + '</svg>';
+      }
+      cover.append(span);
     }
     const widgets = document.createElement('span'); widgets.className = 'book-widgets';
     const badge = document.createElement('span'); badge.textContent = book.chapters.length + (book.chapters.length === 1 ? ' kapitola' : book.chapters.length < 5 ? ' kapitoly' : ' kapitol');
-    const read = document.createElement('span'); read.textContent = 'Otevřít ↗'; widgets.append(badge, read);
+    const read = document.createElement('span'); read.textContent = 'Otevřít '; const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); arrow.setAttribute('viewBox', '0 0 24 24'); arrow.setAttribute('aria-hidden', 'true'); arrow.innerHTML = '<path d="M6 18 18 6M6 6h12v12"/>'; read.append(arrow); widgets.append(badge, read);
     const note = document.createElement('span'); note.className = 'book-note'; note.textContent = book.cover.note;
     card.append(cover, widgets, note); card.addEventListener('click', () => openBook(book)); shelf.append(card);
   });

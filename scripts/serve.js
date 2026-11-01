@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const mime = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
+const mime = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json' };
 const port = Number(process.env.PORT || 3000);
 const server = createServer(async (request, response) => {
   try {
@@ -12,7 +12,7 @@ const server = createServer(async (request, response) => {
     const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
     const target = path.resolve(root, relative);
     const resolved = path.relative(root, target);
-    if (resolved.startsWith('..') || path.isAbsolute(resolved) || relative.split(/[\\/]/).some(part => part.startsWith('.')) || !(relative === 'index.html' || relative.startsWith('src/') || relative.startsWith('public/'))) {
+    if (resolved.startsWith('..') || path.isAbsolute(resolved) || relative.split(/[\\/]/).some(part => part.startsWith('.')) || !(relative === 'index.html' || relative === 'manifest.webmanifest' || relative.startsWith('src/') || relative.startsWith('public/'))) {
       response.writeHead(403).end('Forbidden');
       return;
     }

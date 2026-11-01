@@ -1,0 +1,37 @@
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.reader[data-view=library] .toolbar button:not(.back) { visibility: hidden !important; pointer-events: none; }
+.reader[data-view=library] .reading-content { visibility: hidden; }
+.library { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 20px; bottom: calc(104px + env(safe-area-inset-bottom, 0px)); overflow: hidden; }
+.library[hidden] { display: none; }
+.bookshelf { min-height: 0; height: 100%; align-items: stretch; padding-bottom: 12px; }
+.book-card { display: flex; flex-direction: column; height: 100%; }
+.book-card[hidden] { display: none; }
+.cover { flex: 1 1 auto; aspect-ratio: auto; min-height: 110px; max-height: none; }
+.cover-symbol { top: 20%; font-size: initial; height: 36%; }
+.cover-symbol svg { height: 100%; width: auto; max-width: 50%; fill: none; stroke: #d2b48c; stroke-width: 4; }
+.book-widgets { flex-shrink: 0; align-items: center; }
+.book-widgets span:last-child { display: inline-flex; align-items: center; gap: 4px; }
+.book-widgets svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.book-note { flex-shrink: 0; line-height: 1.5; margin-top: 10px; }
+.library-bottom { flex-shrink: 0; padding-bottom: 4px; }
+.bottom-navigation-items { min-width: 0; }
+.toolbar .back { width: 44px; height: 44px; }
+@media(max-width:480px) {
+  body { overflow: hidden; }
+  .reader { height: 100vh; height: 100dvh; padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  .toolbar { gap: 3px; }
+  .toolbar button { width: 44px; height: 44px; }
+  .toolbar .back { margin-right: auto; }
+  .library { top: max(24px, env(safe-area-inset-top)); }
+  .library header, .library-bottom { padding-left: 24px; padding-right: 24px; }
+  .bookshelf { padding-left: 24px; padding-right: 24px; scroll-padding-inline: 24px; }
+  .library h1 { font-size: clamp(30px, 10vw, 42px); }
+  .cover-title { font-size: clamp(23px, 7vw, 32px); }
+}
+@media(max-height:680px) {
+  .library { gap: 12px; top: max(16px, env(safe-area-inset-top)); }
+  .library header > p:last-child { font-size: 11px; }
+  .cover { padding: 18px; }
+  .cover-series { top: 18px; left: 20px; }
+  .cover-subtitle { font-size: 14px; }
+}

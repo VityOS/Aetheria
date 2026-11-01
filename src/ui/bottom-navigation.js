@@ -23,10 +23,12 @@ export function createBottomNavigation({ container, anchor, items, reducedMotion
   let moving = false;
   let available = false;
   function layout() {
-    const circle = anchor.getBoundingClientRect(), parent = container.getBoundingClientRect();
-    nav.style.left = circle.left - parent.left - container.clientLeft + 'px';
-    nav.style.top = circle.top - parent.top - container.clientTop + 'px';
-    return container.clientWidth - 2 * (circle.left - parent.left);
+    const padding = getComputedStyle(container);
+    const left = parseFloat(padding.paddingLeft);
+    const bottom = Math.max(24, parseFloat(padding.paddingBottom) + 16);
+    nav.style.left = left + 'px';
+    nav.style.top = container.clientHeight - bottom - 44 + 'px';
+    return container.clientWidth - left - parseFloat(padding.paddingRight);
   }
   async function setExpanded(value) {
     if (moving || value === expanded) return;
@@ -38,7 +40,7 @@ export function createBottomNavigation({ container, anchor, items, reducedMotion
       { width: (value ? width : 44) + 'px' },
     ], { duration: reducedMotion.matches ? 1 : 420, fill: 'forwards', easing: 'cubic-bezier(.22,.8,.25,1)' });
     links.style.opacity = value ? '1' : '0';
-    await animation.finished; animation.commitStyles(); animation.cancel();
+    await animation.finished; nav.style.width = (value ? width : 44) + 'px'; animation.cancel();
     expanded = value; nav.inert = !value; nav.dataset.expanded = String(value);
     anchor.setAttribute('aria-expanded', String(value));
     anchor.setAttribute('aria-controls', nav.id);
