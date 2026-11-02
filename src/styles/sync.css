@@ -1,0 +1,4 @@
+.sync-status { margin: 7px 0; font-size: 10px; color: var(--muted); line-height: 1.4; overflow-wrap: anywhere; }
+.editor-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.editor-heading button { min-height: 44px; padding: 8px; border-radius: 8px; background: var(--paper); color: var(--ink); }
+.actions { flex-wrap: wrap; }

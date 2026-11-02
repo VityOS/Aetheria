@@ -1,0 +1,2 @@
+/* Zachování jednotlivých Enterů uvnitř odstavce bez vložení HTML. */
+.prose p { white-space: pre-wrap; overflow-wrap: anywhere; }

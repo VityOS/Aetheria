@@ -40,3 +40,28 @@ test('Upravená kapitola se načte po novém otevření a selhání úložiště
   assert.equal(unavailable.update(0, 'Ztracená změna', ['Text']), false);
   assert.equal(unavailable.getChapters()[0].title, book.chapters[0].title);
 });
+
+test('Jednoduchý Enter, odstavce a Windows řádky se zachovají', () => {
+  assert.deepEqual(parseParagraphs('První\nDruhý\n\nTřetí'), ['První\nDruhý', 'Třetí']);
+  assert.deepEqual(parseParagraphs('První\r\nDruhý\r\n\r\nTřetí'), ['První\nDruhý', 'Třetí']);
+});
+test('Změna katalogu ani přidané kapitoly nevymažou uložený text', () => {
+  const data = new Map();
+  const storage = createStorage({ getItem: k => data.get(k), setItem: (k, v) => data.set(k, v) });
+  const repo = createBookRepository(book, storage);
+  assert.equal(repo.update(0, 'Můj příběh', ['Řádek 1\nŘádek 2']), true);
+  const updated = structuredClone(book);
+  updated.chapters.push({ id: 'new', title: 'Nová kapitola', paragraphs: ['Nový text'] });
+  assert.equal(createBookRepository(updated, storage).getChapters()[0].title, 'Můj příběh');
+  updated.chapters = updated.chapters.filter(c => c.id !== book.chapters[0].id);
+  assert.ok(createBookRepository(updated, storage).getChapters().some(c => c.title === 'Můj příběh'));
+});
+test('Poškozený hlavní záznam obnoví předchozí verzi ze zálohy', () => {
+  const data = new Map();
+  const storage = createStorage({ getItem: k => data.get(k), setItem: (k, v) => data.set(k, v) });
+  const repo = createBookRepository(book, storage);
+  repo.update(0, 'První uložená verze', ['Můj text']);
+  repo.update(0, 'Druhá verze', ['Další text']);
+  storage.set('book-' + book.id, '{broken');
+  assert.equal(createBookRepository(book, storage).getChapters()[0].title, 'První uložená verze');
+});

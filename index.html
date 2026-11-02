@@ -68,6 +68,7 @@
 <button id="next" aria-label="Další kapitola">›</button>
 </div>
 <progress class="progress" id="progress" max="100" value="0" aria-label="Průběh kapitoly"></progress>
+<p id="syncStatus" class="sync-status" role="status"></p>
 <p class="book">Aetheria · Město nad oblaky</p>
 </footer>
 </div>
@@ -77,19 +78,19 @@
 </div>
 <dialog id="unlockDialog" class="dialog">
 <form id="unlockForm">
-<h2>Režim psaní</h2><p>Pro úpravu kapitoly zadejte heslo.</p>
+<h2>Přihlášení autora</h2><p>Použijte svůj autorský účet Firebase.</p><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required>
 <label for="password">Heslo</label><input id="password" type="password" autocomplete="current-password" required>
 <p id="passwordError" class="error" role="alert"></p>
-<div class="actions"><button type="button" id="unlockCancel">Zrušit</button><button type="submit">Odemknout</button></div>
+<div class="actions"><button type="button" id="unlockCancel">Zrušit</button><button type="submit">Přihlásit</button></div>
 </form></dialog>
 <dialog id="editorDialog" class="dialog editor-dialog">
 <form id="editorForm">
-<h2>Psát kapitolu</h2>
+<div class="editor-heading"><h2>Psát kapitolu</h2><button id="logout" type="button">Odhlásit</button></div>
 <label for="editTitle">Název kapitoly</label><input id="editTitle" required maxlength="200">
 <label for="editText">Text kapitoly</label><textarea id="editText" required spellcheck="true" placeholder="Pište příběh…"></textarea>
-<p class="editor-note">Odstavce oddělte prázdným řádkem. Ukládá se pouze v tomto prohlížeči.</p>
+<p class="editor-note">Enter zalomí řádek, prázdný řádek oddělí odstavec. Uložené kapitoly se sdílejí přes Firebase. Rozepsané koncepty zůstávají v tomto prohlížeči.</p>
 <p id="saveError" class="error" role="alert"></p>
-<div class="actions"><button type="button" id="editCancel">Zrušit</button><button type="submit">Uložit kapitolu</button></div>
+<div class="actions"><button type="button" id="loadCurrent">Načíst uloženou verzi</button><button type="button" id="downloadText">Záloha TXT</button><button type="button" id="editCancel">Zavřít</button><button type="submit">Uložit kapitolu</button></div>
 </form></dialog>
 <script type="module" src="./src/app.js">
 </script>

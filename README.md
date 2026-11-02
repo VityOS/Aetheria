@@ -49,3 +49,8 @@ Obsah nyní používá chapters[].paragraphs místo pages; stránkovací model b
 ## Knihovna
 
 Šipka vlevo nahoře otevře animovanou knihovnu. Obálky lze posouvat do stran dotykem nebo šipkami klávesnice v pásu knih. Klepnutí na obálku spustí opačný přechod. Katalog je v src/data/catalog.js; dvě další knihy obsahují ukázkový text. Pozice kapitol, záložky a upravený obsah jsou oddělené podle knihy. Paleta vychází z vedlejšího projektu Aetheria: #F0E7DA, #D2B48C, #121824. Animace respektují omezení pohybu v nastavení zařízení.
+
+
+## Sdílené texty přes Firebase
+
+Aktuální verze používá Firestore a Firebase Authentication. Postup aktivace, pravidla zápisu a převod dřívějších místních textů jsou v FIREBASE-SETUP.md. Pouhé nahrání konfigurace nezapne službu ani nepublikuje bezpečnostní pravidla. Starší popis hesla vitkojak a výhradně místního ukládání výše platí pro předchozí verzi.

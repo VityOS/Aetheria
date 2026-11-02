@@ -1,3 +1,4 @@
+import { cloud, cloudError } from '../../services/firebase.js';
 import { clampNumber } from './model.js';
 import { initPanels } from '../../ui/panels.js';
 import { createToast } from '../../ui/toast.js';
@@ -8,6 +9,24 @@ export function initReader(book, storage) {
   const el = id => document.getElementById(id);
   let repository = createBookRepository(book, storage);
   let chapters = repository.getChapters();
+  let remote = new Map(), serverReady = false, unsubscribe;
+  function status(text) { el('syncStatus').textContent = text; }
+  function watchBook() {
+    unsubscribe?.(); serverReady = false; remote = new Map();
+    const watchedId = book.id;
+    status('Připojuji sdílenou knihovnu…');
+    unsubscribe = cloud.watch(watchedId, (records, confirmed) => {
+      if (book.id !== watchedId) return;
+      serverReady = confirmed;
+      remote = new Map(records.map(chapter => [chapter.id, chapter]));
+      chapters = repository.getChapters().map(chapter => {
+        const online = remote.get(chapter.id);
+        return online ? { id: chapter.id, title: online.title, paragraphs: online.paragraphs } : chapter;
+      });
+      status(confirmed ? 'Sdílená knihovna připojena' : 'Místní kopie · čekám na server');
+      savePosition(); render();
+    }, error => { if (book.id === watchedId) { serverReady = false; status(cloudError(error)); } });
+  }
   const chapterKey = () => book.id === 'aetheria' ? 'chapter' : 'chapter-' + book.id;
   const bookmarkKey = () => book.id === 'aetheria' ? 'bookmark' : 'bookmark-' + book.id;
   const legacyPage = clampNumber(storage.get('page', 1), 1, 16);
@@ -84,13 +103,25 @@ export function initReader(book, storage) {
   });
   initEditor({
     getChapter: () => chapters[index],
-    saveChapter(title, paragraphs) {
-      if (!repository.update(index, title, paragraphs)) return false;
-      chapters = repository.getChapters(); render(); toast('Kapitola uložena'); return true;
+    storage,
+    getDraftKey: () => 'draft-' + book.id + '-' + chapters[index].id,
+    getEditContext() {
+      if (!serverReady) throw new Error('Nejdříve je nutné načíst aktuální stav z Firebase. Zkontrolujte připojení a pravidla Firestore.');
+      return { bookId: book.id, chapterId: chapters[index].id, revision: remote.get(chapters[index].id)?.revision || 0 };
+    },
+    async saveChapter(title, paragraphs, context) {
+      if (context.bookId !== book.id || context.chapterId !== chapters[index].id) throw new Error('Otevřená kapitola se změnila. Text zůstává v konceptu.');
+      const revision = await cloud.save(context.bookId, context.chapterId, title, paragraphs, context.revision);
+      remote.set(context.chapterId, { title, paragraphs, revision });
+      const localSaved = repository.update(index, title, paragraphs);
+      chapters[index] = { ...chapters[index], title, paragraphs };
+      render();
+      status('Uloženo na Firebase · dostupné na všech zařízeních');
+      toast(localSaved ? 'Kapitola uložena na serveru' : 'Uloženo na serveru; místní záloha není dostupná');
     },
   });
   document.querySelector('.book').textContent = book.title;
-  setSize(0); render(); mark();
+  setSize(0); render(); mark(); watchBook();
   return {
     closePanels: panels.close,
     savePosition,
@@ -102,7 +133,7 @@ export function initReader(book, storage) {
       index = clampNumber(storage.get(chapterKey(), 0), 0, chapters.length - 1);
       bookmarked = storage.get(bookmarkKey()) === 'true';
       document.querySelector('.book').textContent = book.title;
-      render(); mark();
+      render(); mark(); watchBook();
     },
   };
 }
