@@ -69,3 +69,5 @@ html[data-theme] .world-section[data-section=home] button:enabled:is(:hover, :fo
 }
 html[data-theme] .world-section[data-section=home] button:focus-visible { outline: 1px solid #880909; outline-offset: 3px; }
 @media(prefers-reduced-motion:reduce) { html[data-theme] .world-section[data-section=home] button:enabled { transition: none; } }
+
+.reader[data-starting] { visibility: hidden; }

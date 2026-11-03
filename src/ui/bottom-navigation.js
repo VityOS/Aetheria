@@ -69,9 +69,12 @@ export function createBottomNavigation({ container, anchor, items, reducedMotion
     nav.style.setProperty('--active-x', center + 'px');
     return { left, top, center };
   }
-  async function slide(show) {
+  async function slide(show, animated = true) {
     layout(); nav.hidden = false; nav.inert = true;
     const frames = show ? [{ transform: 'translateY(130px)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }] : [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(130px)', opacity: 0 }];
+    if (!animated) {
+      Object.assign(nav.style, frames[1]); nav.inert = !show; nav.hidden = !show; available = show; return;
+    }
     const animation = nav.animate(frames, { duration: reducedMotion.matches ? 1 : 420, easing: 'cubic-bezier(.22,.8,.25,1)', fill: 'forwards' });
     await animation.finished;
     Object.assign(nav.style, frames[1]); animation.cancel();
@@ -79,7 +82,7 @@ export function createBottomNavigation({ container, anchor, items, reducedMotion
   }
   new ResizeObserver(() => { if (available) layout(); }).observe(container);
   return {
-    show() { return slide(true); },
+    show(options = {}) { return slide(true, options.animated !== false); },
     hide() { return slide(false); },
     landingTransform() {
       const { left, top, center } = layout();

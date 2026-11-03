@@ -135,6 +135,18 @@ export function initLibrary(catalog, reader, storage) {
     if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
     event.preventDefault(); shelf.scrollBy({ left: (event.key === 'ArrowRight' ? 1 : -1) * shelf.clientWidth * .8, behavior: reduced.matches ? 'instant' : 'smooth' });
   });
-  if (location.hash.startsWith('#kronika')) queueMicrotask(async () => { await showLibrary(); navigate('chronicle'); });
+  // Každé nové otevření začíná přímo na domově, bez přehrání čtečky.
+  content.style.opacity = '0'; content.inert = true;
+  const initialOffsets = offsets();
+  controls.forEach((button, i) => {
+    button.inert = true; button.style.visibility = 'hidden'; button.style.opacity = '0';
+    button.style.transform = 'translateX(' + initialOffsets[i] + 'px) scale(.2)';
+  });
+  back.style.visibility = 'hidden'; back.inert = true;
+  root.dataset.view = 'library';
+  navigate('home');
+  navigation.show({ animated: false });
+  history.replaceState(null, '', location.pathname + location.search + '#domov');
+  root.removeAttribute('data-starting');
   back.addEventListener('click', () => root.dataset.view === 'reader' && showLibrary());
 }
