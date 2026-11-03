@@ -1,0 +1,8 @@
+.prose { padding-left: 23px; }
+.prose > p { position: relative; }
+.prose.choosing-bookmark { cursor: crosshair; }
+.prose.choosing-bookmark > p:hover { background: color-mix(in srgb, var(--sand) 12%, transparent); }
+.line-bookmark-dot { position: absolute; left: -24px; transform: translateY(-50%); width: 24px; height: 24px; padding: 0; background: transparent; border: 0; display: grid; place-items: center; }
+.line-bookmark-dot::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #880909; box-shadow: 0 0 0 1px #f0e7da55; }
+.line-bookmark-dot:hover::before { box-shadow: 0 0 0 3px #88090933; }
+.line-bookmark-dot:focus-visible { outline: 1px solid #880909; border-radius: 50%; outline-offset: 0; }

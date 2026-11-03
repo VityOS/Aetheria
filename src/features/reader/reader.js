@@ -1,3 +1,4 @@
+import { initLineBookmark } from './line-bookmark.js';
 import { cloud, cloudError } from '../../services/firebase.js';
 import { clampNumber } from './model.js';
 import { initPanels } from '../../ui/panels.js';
@@ -10,9 +11,10 @@ export function initReader(book, storage) {
   let repository = createBookRepository(book, storage);
   let chapters = repository.getChapters();
   let remote = new Map(), serverReady = false, unsubscribe;
+  let restoreBookmark = true, awaitingServerBookmark = true;
   function status(text) { el('syncStatus').textContent = text; }
   function watchBook() {
-    unsubscribe?.(); serverReady = false; remote = new Map();
+    unsubscribe?.(); serverReady = false; remote = new Map(); awaitingServerBookmark = true;
     const watchedId = book.id;
     status('Připojuji sdílenou knihovnu…');
     unsubscribe = cloud.watch(watchedId, (records, confirmed) => {
@@ -24,18 +26,19 @@ export function initReader(book, storage) {
         return online ? { id: chapter.id, title: online.title, paragraphs: online.paragraphs } : chapter;
       });
       status(confirmed ? 'Sdílená knihovna připojena' : 'Místní kopie · čekám na server');
+      if (confirmed && awaitingServerBookmark) { restoreBookmark = true; awaitingServerBookmark = false; }
       savePosition(); render();
     }, error => { if (book.id === watchedId) { serverReady = false; status(cloudError(error)); } });
   }
   const chapterKey = () => book.id === 'aetheria' ? 'chapter' : 'chapter-' + book.id;
-  const bookmarkKey = () => book.id === 'aetheria' ? 'bookmark' : 'bookmark-' + book.id;
   const legacyPage = clampNumber(storage.get('page', 1), 1, 16);
   let index = clampNumber(storage.get(chapterKey(), Math.min(2, Math.floor((legacyPage - 1) / 6))), 0, chapters.length - 1);
   let size = clampNumber(storage.get('size', 16), 13, 24, 16);
-  let bookmarked = storage.get(bookmarkKey()) === 'true';
   const panels = initPanels(['contents', 'appearance'], el);
   const toast = createToast(el('toast'));
   const prose = el('prose');
+  const lineBookmark = initLineBookmark({ prose, button: el('bookmark'), storage, getBookId: () => book.id, getChapter: () => chapters[index], toast });
+  index = lineBookmark.chapterIndex(chapters, index);
   const positionKey = () => 'scroll-' + book.id + '-' + chapters[index].id;
   function progress() {
     const max = prose.scrollHeight - prose.clientHeight;
@@ -61,10 +64,11 @@ export function initReader(book, storage) {
     }));
     const position = Math.max(0, Number(storage.get(positionKey(), 0)) || 0);
     prose.scrollTop = position;
+    lineBookmark.draw(restoreBookmark); restoreBookmark = false;
     progress();
   }
   function go(next) {
-    savePosition();
+    savePosition(); lineBookmark.reset(); restoreBookmark = false;
     index = clampNumber(next, 0, chapters.length - 1);
     storage.set(chapterKey(), index);
     render();
@@ -81,19 +85,11 @@ export function initReader(book, storage) {
 
   function setSize(delta) {
     size = clampNumber(size + delta, 13, 24, 16);
-    prose.style.fontSize = size + 'px'; storage.set('size', size); progress();
+    prose.style.fontSize = size + 'px'; storage.set('size', size); lineBookmark.draw(); progress();
   }
   el('smaller').addEventListener('click', () => setSize(-1));
   el('larger').addEventListener('click', () => setSize(1));
-  function mark() {
-    el('bookmark').classList.toggle('active', bookmarked);
-    el('bookmark').setAttribute('aria-pressed', String(bookmarked));
-    el('bookmark').setAttribute('aria-label', bookmarked ? 'Odebrat záložku' : 'Přidat záložku');
-  }
-  el('bookmark').addEventListener('click', () => {
-    bookmarked = !bookmarked; storage.set(bookmarkKey(), bookmarked); mark();
-    toast(bookmarked ? 'Záložka uložena' : 'Záložka odebrána');
-  });
+  function mark() { lineBookmark.refreshState(); }
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') panels.close();
     if (document.querySelector('.reader').dataset.view !== 'reader' || document.querySelector('dialog[open]') || event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input, button, textarea, select, [contenteditable]')) return;
@@ -131,7 +127,8 @@ export function initReader(book, storage) {
       repository = createBookRepository(book, storage);
       chapters = repository.getChapters();
       index = clampNumber(storage.get(chapterKey(), 0), 0, chapters.length - 1);
-      bookmarked = storage.get(bookmarkKey()) === 'true';
+      index = lineBookmark.chapterIndex(chapters, index);
+      restoreBookmark = true; lineBookmark.reset();
       document.querySelector('.book').textContent = book.title;
       render(); mark(); watchBook();
     },
