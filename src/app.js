@@ -1,8 +1,10 @@
+import { appendOrnamentalFrame } from './ui/ornamental-frame.js';
 import { catalog } from './data/catalog.js';
 import { browserStorage } from './services/storage.js';
 import { initReader } from './features/reader/reader.js';
 import { initTheme } from './features/theme/theme.js';
 import { initLibrary } from './features/library/library.js';
+appendOrnamentalFrame(document.querySelector('.reader'));
 const storage = browserStorage();
 initTheme(document.getElementById('theme'), storage);
 const selected = catalog.find(book => book.id === storage.get('selected-book')) || catalog[0];

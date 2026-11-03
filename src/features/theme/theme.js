@@ -6,16 +6,14 @@ export function initTheme(button, storage) {
   let theme = storage.get('theme', 'light') === 'dark' ? 'dark' : 'light';
   function render() {
     document.documentElement.dataset.theme = theme;
-    const label = theme === 'dark' ? 'Přepnout na světlý režim' : 'Přepnout na tmavý režim';
+    const label = theme === 'dark' ? 'Přepnout na denní režim' : 'Přepnout na noční režim';
     button.setAttribute('aria-pressed', String(theme === 'dark'));
-    button.setAttribute('aria-label', label);
-    button.title = label;
-    button.innerHTML = icons[theme];
+    button.setAttribute('aria-label', label); button.title = label; button.innerHTML = icons[theme];
+    document.querySelectorAll('[data-theme-choice]').forEach(choice => choice.setAttribute('aria-pressed', String(choice.dataset.themeChoice === theme)));
+    document.querySelector('meta[name=theme-color]')?.setAttribute('content', theme === 'dark' ? '#343333' : '#f0e7da');
   }
-  button.addEventListener('click', () => {
-    theme = theme === 'dark' ? 'light' : 'dark';
-    storage.set('theme', theme);
-    render();
-  });
+  function choose(value) { theme = value === 'dark' ? 'dark' : 'light'; storage.set('theme', theme); render(); }
+  button.addEventListener('click', () => choose(theme === 'dark' ? 'light' : 'dark'));
+  document.addEventListener('click', event => { const choice = event.target.closest('[data-theme-choice]'); if (choice) choose(choice.dataset.themeChoice); });
   render();
 }

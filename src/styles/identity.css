@@ -1,0 +1,71 @@
+/* Jediná společná paleta: Graphite, Linen, Sand, Blood Red. */
+:root, html[data-theme=light] { --identity-paper: #f0e7da; --identity-surface: #f7efe3; --identity-ink: #343333; --identity-muted: #776b5e; --identity-line: #d2b48c; --identity-ornament: #b79770; }
+html[data-theme=dark] { --identity-paper: #282626; --identity-surface: #343333; --identity-ink: #f0e7da; --identity-muted: #d2bfa5; --identity-line: #82705c; --identity-ornament: #d2b48c; }
+html, html[data-theme], html:has(.reader[data-view=library]), html[data-theme] body, html:has(.reader[data-view=library]) body { background: var(--identity-paper); color: var(--identity-ink); color-scheme: light; }
+html[data-theme=dark], html[data-theme=dark] body { color-scheme: dark; }
+html[data-theme] .reader, html[data-theme] .reader[data-view=library], html[data-theme] .dialog, html[data-theme] .library-dialog, html[data-theme] .item-detail {
+  --paper: var(--identity-paper); --surface: var(--identity-surface); --ink: var(--identity-ink); --muted: var(--identity-muted); --line: var(--identity-line); --sand: #d2b48c;
+  background: var(--surface); color: var(--ink); border-color: var(--line); color-scheme: inherit;
+}
+.reader { border-radius: 2px; isolation: isolate; }
+.ornamental-frame { position: absolute; inset: 7px; z-index: 0; pointer-events: none; color: var(--identity-ornament); opacity: .7; }
+.ornamental-frame svg { width: 100%; height: 100%; overflow: visible; fill: none; stroke: currentColor; stroke-width: .7; }
+.ornamental-frame svg * { vector-effect: non-scaling-stroke; }
+.world-section, .library header { padding-top: 12px; }
+.world-section h1, .library h1, .item-detail-title { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
+.eyebrow, .chapter { color: var(--identity-muted); }
+.world-link, .chronicle-card, .chronicle-thumbnail, .item-hero, .book-widgets { border-radius: 3px; }
+.world-link { border-color: var(--line); background: transparent; }
+.world-link:hover { border-color: #880909; }
+.home-theme-choice { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); padding: 4px; gap: 4px; }
+.home-theme-choice button { min-height: 44px; padding: 10px 6px; background: transparent; color: var(--ink); font-size: 11px; letter-spacing: .5px; border: 1px solid transparent; }
+.home-theme-choice button[aria-pressed=true] { border-color: #880909; background: var(--paper); }
+.world-section[data-section=home] header { text-align: center; }
+.world-section[data-section=home] h1 { font-size: 52px; letter-spacing: -2px; }
+.world-section[data-section=home] header > p:last-child { font-family: Georgia, serif; font-size: 16px; }
+.home-emblem { display: grid; place-items: center; margin: 22px 0; color: var(--identity-ornament); }
+.home-emblem svg { width: min(52%, 180px); height: auto; fill: none; stroke: currentColor; stroke-width: .8; }
+.world-section[data-section=home] .world-link { text-align: center; text-transform: uppercase; font-size: 10px; letter-spacing: 1.8px; padding: 18px 12px; }
+html[data-theme] .chronicle-card { background: var(--paper); color: var(--ink); border-color: var(--line); }
+html[data-theme] .chronicle-summary { color: var(--muted); }
+html[data-theme] .chronicle-kind, html[data-theme] .chronicle-number { color: var(--identity-muted); }
+html[data-theme] .item-detail-index, html[data-theme] .item-lead, html[data-theme] .item-facts dt { color: var(--muted); }
+html[data-theme] .item-facts { border-color: var(--line); }
+html[data-theme] .item-hero { background: #f7efe3; border-color: var(--line); }
+.item-detail-page { padding-inline: 30px; padding-top: max(28px, env(safe-area-inset-top)); }
+html[data-theme] .prose { color: var(--ink); }
+html[data-theme=dark] .world-tab { background: var(--paper); border-color: var(--line); color: var(--ink); }
+html[data-theme] .world-tab[aria-pressed=true] { border-color: #880909; background: #343333; color: #f0e7da; }
+@media(max-width:480px) {
+  .ornamental-frame { inset: 5px; }
+  .reader { padding-left: max(22px, env(safe-area-inset-left)); padding-right: max(22px, env(safe-area-inset-right)); padding-top: max(22px, env(safe-area-inset-top)); }
+  .toolbar { gap: 2px; }
+  .toolbar button { width: 40px; height: 44px; }
+  .toolbar .back { width: 44px; }
+  .world-section { left: 26px; right: 26px; }
+}
+@media(max-height:700px) { .home-emblem { margin: 16px 0; }.home-emblem svg { max-height: 105px; }.world-section[data-section=home] h1 { font-size: 44px; } }
+
+.world-section, .item-detail-page { scrollbar-width: thin; scrollbar-color: var(--identity-line) transparent; }
+html[data-theme=dark] .bottom-navigation .navigation-shape { fill: #282626; }
+
+/* Ornament patří pouze do pozadí domovské stránky. */
+.reader > .ornamental-frame { display: none; }
+.reader[data-view=library][data-section=home] > .ornamental-frame { display: block; }
+.world-section, .library { z-index: 1; }
+.reading-content { position: relative; z-index: 1; }
+.item-detail { isolation: isolate; }
+.item-detail-page { position: relative; z-index: 1; }
+.chronicle-card { position: relative; isolation: isolate; }
+.chronicle-card > .chronicle-thumbnail, .chronicle-card > .chronicle-card-copy { position: relative; z-index: 1; }
+
+/* Zvýraznění pouze tlačítek domovské stránky. */
+html[data-theme] .world-section[data-section=home] button:enabled { transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease; }
+html[data-theme] .world-section[data-section=home] button:enabled:is(:hover, :focus-visible) {
+  background-color: #282626;
+  color: #f0e7da;
+  border-color: #880909;
+  box-shadow: inset 0 0 0 1px #880909;
+}
+html[data-theme] .world-section[data-section=home] button:focus-visible { outline: 1px solid #880909; outline-offset: 3px; }
+@media(prefers-reduced-motion:reduce) { html[data-theme] .world-section[data-section=home] button:enabled { transition: none; } }

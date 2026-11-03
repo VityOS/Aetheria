@@ -135,5 +135,6 @@ export function initLibrary(catalog, reader, storage) {
     if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
     event.preventDefault(); shelf.scrollBy({ left: (event.key === 'ArrowRight' ? 1 : -1) * shelf.clientWidth * .8, behavior: reduced.matches ? 'instant' : 'smooth' });
   });
+  if (location.hash.startsWith('#kronika')) queueMicrotask(async () => { await showLibrary(); navigate('chronicle'); });
   back.addEventListener('click', () => root.dataset.view === 'reader' && showLibrary());
 }
