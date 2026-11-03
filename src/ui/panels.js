@@ -13,5 +13,15 @@ export function initPanels(names, getElement) {
       getElement(name).setAttribute('aria-expanded', String(opening));
     });
   }
+  document.addEventListener('pointerdown', event => {
+    for (const name of names) {
+      const panel = getElement(name + 'Panel');
+      const trigger = getElement(name);
+      if (!panel.hidden && !panel.contains(event.target) && !trigger.contains(event.target)) {
+        panel.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    }
+  });
   return { close };
 }
